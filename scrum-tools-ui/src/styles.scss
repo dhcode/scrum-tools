@@ -1,0 +1,54 @@
+@import "styles/colors";
+html {
+  font-family: Verdana, sans-serif;
+  font-size: 12pt;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+a {
+  color: $accent-color;
+  text-decoration: none;
+  &:hover {
+    color: $accent-color-hover;
+    text-decoration: underline;
+  }
+}
+
+button {
+  border: none;
+  background-color: $accent-color;
+  color: white;
+  padding: 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+
+  &:hover {
+    background-color: $accent-color-hover;
+  }
+
+}
+
+app-root {
+  display: grid;
+  min-height: 100vh;
+  grid-template-columns: auto;
+  grid-template-rows: auto 1fr auto;
+
+  > header {
+    border-bottom: 1px solid #ccc;
+
+  }
+  > main {
+    padding: 1rem;
+  }
+  > footer {
+    border-top: 1px solid #ccc;
+    padding: 1rem;
+  }
+}
+

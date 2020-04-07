@@ -1,0 +1,19 @@
+@import "src/styles/colors";
+
+.main-nav {
+  > a {
+    display: inline-block;
+    padding: 1rem;
+
+    &.active {
+      background-color: $accent-color;
+      color: white;
+    }
+
+    &:hover {
+      text-decoration: none;
+      background-color: $accent-color-hover;
+      color: white;
+    }
+  }
+}

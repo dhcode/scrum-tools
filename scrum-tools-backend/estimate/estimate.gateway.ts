@@ -1,7 +1,7 @@
 import { ConnectedSocket, MessageBody, OnGatewayInit, SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
 import { Namespace, Socket } from 'socket.io';
 import { EstimationService, sessionRoomName } from './estimation/estimation.service';
-import { CreateSessionDto, GetActiveTopicDto, JoinSessionDto } from 'scrum-tools-api/estimate/estimation-requests';
+import { CreateSessionArgs, GetActiveTopicDto, JoinSessionDto } from 'scrum-tools-api/estimate/estimation-requests';
 
 @WebSocketGateway()
 export class EstimateGateway implements OnGatewayInit {
@@ -12,7 +12,7 @@ export class EstimateGateway implements OnGatewayInit {
   }
 
   @SubscribeMessage('createSession')
-  async createSessionRequest(@MessageBody() data: CreateSessionDto, @ConnectedSocket() client: Socket): Promise<any> {
+  async createSessionRequest(@MessageBody() data: CreateSessionArgs, @ConnectedSocket() client: Socket): Promise<any> {
     const session = await this.estimationService.createEstimationSession(
       data.name,
       data.description,

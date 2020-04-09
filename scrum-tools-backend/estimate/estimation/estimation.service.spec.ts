@@ -28,12 +28,12 @@ describe('EstimationService', () => {
     const estimationSession = await service.createEstimationSession('My session', 'This is a nice session');
     expect(estimationSession.name).toBe('My session');
     expect(estimationSession.description).toBe('This is a nice session');
-    expect(estimationSession.defaultOptions).toEqual([1, 2, 3, 5, 8, 13, 20, 40, null]);
+    expect(estimationSession.defaultOptions).toEqual([1, 2, 3, 5, 8, 13, 20, 40, 0]);
 
     const result = await service.getEstimationSession(estimationSession.id);
     expect(result.name).toBe('My session');
     expect(result.description).toBe('This is a nice session');
-    expect(result.defaultOptions).toEqual([1, 2, 3, 5, 8, 13, 20, 40, null]);
+    expect(result.defaultOptions).toEqual([1, 2, 3, 5, 8, 13, 20, 40, 0]);
   });
 
   it('should add and remove members', async () => {

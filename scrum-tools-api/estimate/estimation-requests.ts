@@ -1,20 +1,34 @@
-import { ArrayNotEmpty, ArrayUnique, IsNotEmpty, IsString, MaxLength, MinLength, Validate } from 'class-validator';
-import { IsEstimationOption } from './options-validator';
+import {
+  ArrayNotEmpty,
+  ArrayUnique,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
+import { ArgsType, Field, Int } from '@nestjs/graphql';
 
-export class CreateSessionDto {
+@ArgsType()
+export class CreateSessionArgs {
+  @Field()
   @IsString()
   @MinLength(4)
   @MaxLength(100)
   @IsNotEmpty()
   name: string;
 
+  @Field()
   @IsString()
   @MaxLength(4000)
   description: string;
 
-  @Validate(IsEstimationOption)
+  @Field(() => Int, { nullable: true })
+  @IsOptional()
   @ArrayUnique()
   @ArrayNotEmpty()
+  @IsInt({ each: true })
   defaultOptions: number[];
 }
 

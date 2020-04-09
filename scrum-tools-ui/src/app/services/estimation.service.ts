@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { SocketService } from './socket.service';
 import { Observable } from 'rxjs';
-import { CreateSessionDto, JoinSessionDto } from 'scrum-tools-api/estimate/estimation-requests';
+import { CreateSessionArgs, JoinSessionDto } from 'scrum-tools-api/estimate/estimation-requests';
 import { LOCAL_STORAGE, StorageService } from 'ngx-webstorage-service';
 import { map } from 'rxjs/operators';
 
@@ -16,7 +16,7 @@ export class EstimationService {
   }
 
   createSession(name: string, description: string, defaultOptions: number[]) {
-    const req: CreateSessionDto = {
+    const req: CreateSessionArgs = {
       name,
       description,
       defaultOptions,

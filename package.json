@@ -24,12 +24,16 @@
     "@nestjs/common": "^7.0.0",
     "@nestjs/config": "^0.4.0",
     "@nestjs/core": "^7.0.0",
+    "@nestjs/graphql": "^7.2.1",
     "@nestjs/platform-express": "^7.0.0",
     "@nestjs/platform-socket.io": "^7.0.6",
     "@nestjs/websockets": "^7.0.6",
+    "apollo-server-express": "^2.12.0",
     "class-transformer": "^0.2.3",
     "class-validator": "^0.12.0-rc.0",
     "date-fns": "^2.11.1",
+    "graphql": "^15.0.0",
+    "graphql-tools": "^4.0.7",
     "ioredis": "^4.16.1",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
@@ -65,7 +69,7 @@
       "json",
       "ts"
     ],
-    "rootDir": "src",
+    "rootDir": "scrum-tools-backend",
     "testRegex": ".spec.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"

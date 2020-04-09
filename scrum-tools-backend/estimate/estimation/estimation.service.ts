@@ -40,7 +40,7 @@ export class EstimationService {
       id: null,
       name: name,
       description: description,
-      defaultOptions: defaultOptions || [1, 2, 3, 5, 8, 13, 20, 40, null],
+      defaultOptions: defaultOptions || [1, 2, 3, 5, 8, 13, 20, 40, 0],
       createdAt: new Date().toISOString(),
       modifiedAt: new Date().toISOString(),
       adminSecret: randomString(16),
@@ -130,6 +130,15 @@ export class EstimationService {
       return topic;
     }
     return undefined;
+  }
+
+  async getTopics(sessionId: string, limit = 100): Promise<EstimationTopic[]> {
+    const topicIds = await this.redis.redis.lrange('estSessionTopics:' + sessionId, 0, limit);
+    const result = [];
+    for (const topicId of topicIds) {
+      result.push(this.getTopic(topicId));
+    }
+    return result;
   }
 
   async getTopic(topicId: string): Promise<EstimationTopic> {

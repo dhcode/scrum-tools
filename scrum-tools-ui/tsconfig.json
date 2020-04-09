@@ -14,8 +14,15 @@
     "lib": [
       "es2018",
       "dom"
-    ]
+    ],
+    "paths": {
+      "scrum-tools-api/*": ["../scrum-tools-api/*"]
+    }
   },
+  "include": [
+    "../scrum-tools-api/**/*.ts",
+    "**/*.ts"
+  ],
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,
     "strictInjectionParameters": true

@@ -1,14 +1,14 @@
 import { ConnectedSocket, MessageBody, OnGatewayInit, SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
-import { Server, Socket } from 'socket.io';
+import { Namespace, Socket } from 'socket.io';
 import { EstimationService, sessionRoomName } from './estimation/estimation.service';
-import { CreateSessionDto, GetActiveTopicDto, JoinSessionDto } from './models/events';
+import { CreateSessionDto, GetActiveTopicDto, JoinSessionDto } from 'scrum-tools-api/estimate/estimation-requests';
 
 @WebSocketGateway()
 export class EstimateGateway implements OnGatewayInit {
   constructor(private estimationService: EstimationService) {}
 
-  afterInit(server: Server): any {
-    this.estimationService.setNamespace(server.of('/'));
+  afterInit(namespace: Namespace): any {
+    this.estimationService.setNamespace(namespace);
   }
 
   @SubscribeMessage('createSession')

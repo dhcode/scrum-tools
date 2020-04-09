@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { EstimationMember, EstimationSession } from '../models/estimation-session';
+import {
+  EstimationMember,
+  EstimationSession,
+  EstimationTopic,
+  TopicVote,
+} from '../../../scrum-tools-api/estimate/estimation-models';
 import { randomString } from '../../shared/utils';
-import { EstimationTopic, TopicVote } from '../models/estimation-topic';
 import { RedisService } from '../../redis/redis.service';
 import { Namespace } from 'socket.io';
 

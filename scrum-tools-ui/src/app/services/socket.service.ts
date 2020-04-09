@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 import * as socketClient from 'socket.io-client';
-import { fromEvent, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -54,6 +54,15 @@ export class SocketService {
 
     this.socket.on('error', (error) => {
       console.log('error', error);
+    });
+  }
+
+  request<T>(command: string, data: any): Observable<T> {
+    return new Observable<T>((subscriber) => {
+      this.socket.emit(command, data, (result) => {
+        subscriber.next(result);
+        subscriber.complete();
+      });
     });
   }
 }

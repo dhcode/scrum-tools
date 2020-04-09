@@ -1,23 +1,20 @@
 export interface EstimationSession {
-  _id: string;
+  id: string;
   name: string;
   description: string;
 
   joinSecret: string;
   adminSecret: string;
 
-  createdAt: Date;
-  modifiedAt: Date;
-  expiresAt: Date;
+  createdAt: string;
+  modifiedAt: string;
 
   defaultOptions: number[];
-
-  members: EstimationMember[];
 }
 
 export interface EstimationMember {
   id: string;
   name: string;
-  joinedAt: Date;
-  lastSeenAt: Date;
+  joinedAt: string;
+  lastSeenAt: string;
 }

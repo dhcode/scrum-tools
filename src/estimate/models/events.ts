@@ -1,18 +1,37 @@
-import { IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
+import { ArrayNotEmpty, ArrayUnique, IsNotEmpty, IsString, MaxLength, MinLength, Validate } from 'class-validator';
+import { IsEstimationOption } from './options-validator';
 
-export class StartEstimationDto {
+export class CreateSessionDto {
+  @IsString()
+  @MinLength(4)
+  @MaxLength(100)
+  @IsNotEmpty()
+  name: string;
+
+  @IsString()
+  @MaxLength(4000)
+  description: string;
+
+  @Validate(IsEstimationOption)
+  @ArrayUnique()
+  @ArrayNotEmpty()
+  defaultOptions: number[];
+}
+
+export class JoinSessionDto {
   @IsString()
   @MaxLength(10)
   @IsNotEmpty()
   sessionId: string;
 
   @IsString()
-  @IsOptional()
   @MaxLength(20)
-  joinSecret?: string;
+  joinSecret: string;
+}
 
+export class GetActiveTopicDto {
   @IsString()
-  @IsOptional()
-  @MaxLength(20)
-  adminSecret?: string;
+  @MaxLength(10)
+  @IsNotEmpty()
+  sessionId: string;
 }

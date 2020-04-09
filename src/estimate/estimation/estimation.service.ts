@@ -1,29 +1,30 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { EstimationMember, EstimationSession } from '../models/estimation-session';
-import { Collection, Db } from 'mongodb';
-import { randomString, retryInsert } from '../../shared/utils';
-import { addDays } from 'date-fns';
+import { randomString } from '../../shared/utils';
 import { EstimationTopic, TopicVote } from '../models/estimation-topic';
-import { Redis } from 'ioredis';
+import { RedisService } from '../../redis/redis.service';
+import { Namespace } from 'socket.io';
 
-function getExpireDate(): Date {
-  return addDays(new Date(), 90);
+const expireSeconds = 90 * 86400;
+
+export function sessionRoomName(sessionId: string) {
+  return 'session:' + sessionId;
 }
 
 @Injectable()
 export class EstimationService {
-  constructor(private db: Db, @Inject('REDIS') private redis: Redis) {}
+  private namespace: Namespace;
 
-  private get estimationCollection(): Collection<EstimationSession> {
-    return this.db.collection('estimationSessions');
+  constructor(private redis: RedisService) {}
+
+  setNamespace(ns: Namespace) {
+    this.namespace = ns;
   }
 
-  private get topicCollection(): Collection<EstimationTopic> {
-    return this.db.collection('estimationTopic');
-  }
-
-  async setupCollections() {
-    await this.topicCollection.createIndex({ sessionId: 1 });
+  private notifySession(sessionId: string, event: string, data) {
+    if (this.namespace) {
+      this.namespace.to(sessionRoomName(sessionId)).emit(event, data);
+    }
   }
 
   async createEstimationSession(
@@ -32,85 +33,103 @@ export class EstimationService {
     defaultOptions?: number[],
   ): Promise<EstimationSession> {
     const session: EstimationSession = {
-      _id: randomString(),
+      id: null,
       name: name,
       description: description,
       defaultOptions: defaultOptions || [1, 2, 3, 5, 8, 13, 20, 40, null],
-      createdAt: new Date(),
-      modifiedAt: new Date(),
-      expiresAt: getExpireDate(),
-      members: [],
+      createdAt: new Date().toISOString(),
+      modifiedAt: new Date().toISOString(),
       adminSecret: randomString(16),
       joinSecret: randomString(6),
     };
 
-    await retryInsert(this.estimationCollection, session);
+    await this.redis.insertObject('estSession', session, expireSeconds);
 
     return session;
   }
 
+  async updateEstimationExpiry(sessionId: string) {
+    await this.redis.updateExpiry('estSession', sessionId, expireSeconds);
+    await this.redis.updateExpiry('estSessionMembers', sessionId, expireSeconds);
+    await this.redis.updateExpiry('estSessionTopics', sessionId, expireSeconds);
+  }
+
   getEstimationSession(id: string): Promise<EstimationSession> {
-    return this.estimationCollection.findOne({ _id: id });
+    return this.redis.getObjectById('estSession', id);
   }
 
   async addMember(sessionId: string, name: string): Promise<EstimationMember> {
     const member = {
-      id: randomString(),
+      id: null,
       name: name,
-      joinedAt: new Date(),
-      lastSeenAt: new Date(),
+      joinedAt: new Date().toISOString(),
+      lastSeenAt: new Date().toISOString(),
     };
 
-    await this.estimationCollection.updateOne(
-      { _id: sessionId },
-      { $push: { members: member }, $set: { expiresAt: getExpireDate() } },
-    );
-
+    await this.redis.insertListEntry('estSessionMembers', sessionId, member, expireSeconds);
+    await this.updateEstimationExpiry(sessionId);
+    this.notifySession(sessionId, 'addMember', member);
     return member;
   }
 
   async updateMemberLastSeen(sessionId: string, memberId: string): Promise<void> {
-    await this.estimationCollection.updateOne(
-      { _id: sessionId, 'members.id': memberId },
-      { $set: { 'members.$.lastSeenAt': new Date(), expiresAt: getExpireDate() } },
-    );
+    const member = await this.redis.getListEntryById<EstimationMember>('estSessionMembers', sessionId, memberId);
+    member.lastSeenAt = new Date().toISOString();
+    await this.redis.updateListEntry('estSessionMembers', sessionId, memberId, member);
+    await this.updateEstimationExpiry(sessionId);
+    this.notifySession(sessionId, 'updateMember', member);
   }
 
   async removeMember(sessionId: string, memberId: string): Promise<void> {
-    await this.estimationCollection.updateOne(
-      { _id: sessionId },
-      { $pull: { members: { id: memberId } }, $set: { expiresAt: getExpireDate() } },
-    );
+    await this.redis.removeListEntry('estSessionMembers', sessionId, memberId);
+    await this.updateEstimationExpiry(sessionId);
+    this.notifySession(sessionId, 'removeMember', memberId);
+  }
+
+  async getMembers(sessionId: string): Promise<EstimationMember[]> {
+    return await this.redis.getListEntries<EstimationMember>('estSessionMembers', sessionId);
   }
 
   async createTopic(session: EstimationSession, name: string, description: string): Promise<EstimationTopic> {
     const topic: EstimationTopic = {
-      _id: session._id + ':' + randomString(),
-      sessionId: session._id,
+      id: null,
+      sessionId: session.id,
       name: name,
       description: description,
       options: session.defaultOptions,
-      startedAt: new Date(),
+      startedAt: new Date().toISOString(),
       endedAt: null,
-      votes: [],
     };
 
-    const activeTopic = await this.getActiveTopic(session._id);
+    const activeTopic = await this.getActiveTopic(session.id);
     if (activeTopic) {
-      this.endVote(activeTopic._id);
+      this.endVote(activeTopic.id);
     }
 
-    await this.topicCollection.insertOne(topic);
+    await this.redis.insertObject('estSessionTopic', topic, expireSeconds);
+    const multi = this.redis.redis.multi();
+    const topicsListKey = 'estSessionTopics:' + session.id;
+    multi.lpush(topicsListKey, topic.id);
+    multi.ltrim(topicsListKey, 0, 99);
+    multi.expire(topicsListKey, expireSeconds);
+    await multi.exec();
+
+    this.notifySession(session.id, 'createTopic', topic);
 
     return topic;
   }
 
   async getActiveTopic(sessionId: string): Promise<EstimationTopic> {
-    return this.topicCollection.findOne({ sessionId: sessionId, endedAt: null }, { sort: { startedAt: -1 } });
+    const topicId = await this.redis.redis.lindex('estSessionTopics:' + sessionId, 0);
+    const topic = await this.getTopic(topicId);
+    if (topic && topic.endedAt === null) {
+      return topic;
+    }
+    return undefined;
   }
 
   async getTopic(topicId: string): Promise<EstimationTopic> {
-    return this.topicCollection.findOne({ _id: topicId });
+    return this.redis.getObjectById('estSessionTopic', topicId);
   }
 
   async addVote(topicId: string, member: EstimationMember, voteValue: number): Promise<TopicVote> {
@@ -118,23 +137,41 @@ export class EstimationService {
       memberId: member.id,
       memberName: member.name,
       vote: voteValue,
-      votedAt: new Date(),
+      votedAt: new Date().toISOString(),
     };
-
-    const result = await this.topicCollection.updateOne({ _id: topicId, endedAt: null }, { $push: { votes: vote } });
-    if (!result.modifiedCount) {
+    const topic = await this.getTopic(topicId);
+    if (topic.endedAt) {
       throw new Error('Vote could not be added');
     }
+    await this.redis.updateListEntry('estSessionTopicVote', topicId, member.id, vote);
+    await this.redis.updateExpiry('estSessionTopicVote', topicId, expireSeconds);
+
+    this.notifySession(topic.sessionId, 'addVote', {
+      memberId: vote.memberId,
+      votedAt: vote.votedAt,
+    });
+
     return vote;
   }
 
+  async getVotes(topicId: string): Promise<TopicVote[]> {
+    return await this.redis.getListEntries('estSessionTopicVote', topicId);
+  }
+
   async endVote(topicId: string): Promise<void> {
-    const result = await this.topicCollection.updateOne(
-      { _id: topicId, endedAt: null },
-      { $set: { endedAt: new Date() } },
-    );
-    if (!result.modifiedCount) {
+    const topic = await this.getTopic(topicId);
+    if (topic.endedAt) {
       throw new Error('Vote already ended');
     }
+
+    topic.endedAt = new Date().toISOString();
+    await this.redis.updateObject('estSessionTopic', topicId, {
+      endedAt: topic.endedAt,
+    });
+
+    this.notifySession(topic.sessionId, 'endVote', {
+      topic: topic,
+      votes: await this.getVotes(topic.id),
+    });
   }
 }

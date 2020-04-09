@@ -1,20 +1,18 @@
 export interface EstimationTopic {
-  _id: string;
+  id: string;
   sessionId: string;
   name: string;
   description: string;
 
   options: number[];
 
-  startedAt: Date;
-  endedAt: Date;
-
-  votes: TopicVote[];
+  startedAt: string;
+  endedAt: string;
 }
 
 export interface TopicVote {
   memberId: string;
   memberName: string;
-  votedAt: Date;
+  votedAt: string;
   vote: number;
 }

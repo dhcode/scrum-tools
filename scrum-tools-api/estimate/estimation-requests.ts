@@ -32,15 +32,45 @@ export class CreateSessionArgs {
   defaultOptions: number[];
 }
 
-export class JoinSessionDto {
+@ArgsType()
+export class GetSessionArgs {
+  @Field()
   @IsString()
   @MaxLength(10)
   @IsNotEmpty()
-  sessionId: string;
+  id: string;
 
+  @Field()
   @IsString()
   @MaxLength(20)
   joinSecret: string;
+
+  @Field({ nullable: true })
+  @IsOptional()
+  @IsString()
+  @MaxLength(20)
+  @IsNotEmpty()
+  adminSecret?: string;
+}
+
+@ArgsType()
+export class JoinSessionArgs {
+  @Field()
+  @IsString()
+  @MaxLength(10)
+  @IsNotEmpty()
+  id: string;
+
+  @Field()
+  @IsString()
+  @MaxLength(20)
+  joinSecret: string;
+
+  @Field({ description: 'Display name of the member who joins.' })
+  @IsString()
+  @MinLength(3)
+  @MaxLength(20)
+  name: string;
 }
 
 export class GetActiveTopicDto {

@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@angular/core';
 import { SocketService } from './socket.service';
 import { Observable } from 'rxjs';
-import { CreateSessionArgs, JoinSessionDto } from 'scrum-tools-api/estimate/estimation-requests';
+import { CreateSessionArgs, JoinSessionArgs } from 'scrum-tools-api/estimate/estimation-requests';
 import { LOCAL_STORAGE, StorageService } from 'ngx-webstorage-service';
 import { map } from 'rxjs/operators';
 
@@ -24,11 +24,12 @@ export class EstimationService {
     return this.socketService.request('createSession', req).pipe(map((res) => {}));
   }
 
-  joinSession(sessionId: string, joinSecret: string): Observable<any> {
+  joinSession(sessionId: string, joinSecret: string, name: string): Observable<any> {
     return new Observable<any>((subscriber) => {
-      const request: JoinSessionDto = {
-        sessionId,
+      const request: JoinSessionArgs = {
+        id: sessionId,
         joinSecret,
+        name,
       };
       this.socketService.socket.emit('joinSession', request, (session) => {
         subscriber.next(session);

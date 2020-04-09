@@ -12,7 +12,7 @@ export class EstimationSessionsViewComponent implements OnInit {
   ngOnInit(): void {}
 
   start() {
-    this.estimationService.joinSession('test1', 'ssss').subscribe((res) => {
+    this.estimationService.joinSession('test1', 'ssss', 'hey').subscribe((res) => {
       console.log('res', res);
     });
   }

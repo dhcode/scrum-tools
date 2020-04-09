@@ -1,19 +1,19 @@
-import { Args, Int, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
+import { Args, Int, Mutation, Parent, Query, ResolveField, Resolver, Subscription } from '@nestjs/graphql';
 import { EstimationMember, EstimationSession, EstimationTopic } from '../../scrum-tools-api/estimate/estimation-models';
-import { EstimationService } from './estimation/estimation.service';
+import { EstimationService, sessionRoomName } from './estimation/estimation.service';
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { CreateSessionArgs } from '../../scrum-tools-api/estimate/estimation-requests';
+import { CreateSessionArgs, GetSessionArgs, JoinSessionArgs } from '../../scrum-tools-api/estimate/estimation-requests';
+import { PubSub } from 'graphql-subscriptions';
 
 @Resolver(() => EstimationSession)
 export class EstimationSessionResolver {
+  pubSub = new PubSub();
+
   constructor(private estimationService: EstimationService) {}
 
   @Query(() => EstimationSession)
-  async estimationSession(
-    @Args('id') id: string,
-    @Args('joinSecret') joinSecret: string,
-    @Args('adminSecret', { nullable: true }) adminSecret: string,
-  ): Promise<EstimationSession> {
+  async estimationSession(@Args() args: GetSessionArgs): Promise<EstimationSession> {
+    const { id, joinSecret, adminSecret } = args;
     const session = await this.estimationService.getEstimationSession(id);
     if (session && (session.joinSecret === joinSecret || session.adminSecret === adminSecret)) {
       if (session.adminSecret === adminSecret) {
@@ -47,5 +47,20 @@ export class EstimationSessionResolver {
   @Mutation(() => EstimationSession)
   async createSession(@Args() args: CreateSessionArgs) {
     return this.estimationService.createEstimationSession(args.name, args.description, args.defaultOptions);
+  }
+
+  @Mutation(() => EstimationMember)
+  async joinSession(@Args() args: JoinSessionArgs): Promise<EstimationMember> {
+    const session = await this.estimationSession(args);
+    const member = await this.estimationService.addMember(session.id, args.name);
+    console.log('member', member);
+    await this.pubSub.publish(sessionRoomName(session.id), { memberUpdated: member });
+    return member;
+  }
+
+  @Subscription(() => EstimationMember)
+  async memberUpdated(@Args() args: GetSessionArgs) {
+    const session = await this.estimationSession(args);
+    return this.pubSub.asyncIterator(sessionRoomName(session.id));
   }
 }

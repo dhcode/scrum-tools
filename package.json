@@ -33,6 +33,7 @@
     "class-validator": "^0.12.0-rc.0",
     "date-fns": "^2.11.1",
     "graphql": "^15.0.0",
+    "graphql-subscriptions": "^1.1.0",
     "graphql-tools": "^4.0.7",
     "ioredis": "^4.16.1",
     "reflect-metadata": "^0.1.13",

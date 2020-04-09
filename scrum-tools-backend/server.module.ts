@@ -5,7 +5,12 @@ import { EstimateModule } from './estimate/estimate.module';
 import { RedisModule } from './redis/redis.modue';
 
 @Module({
-  imports: [ConfigModule.forRoot(), GraphQLModule.forRoot({ autoSchemaFile: true }), RedisModule, EstimateModule],
+  imports: [
+    ConfigModule.forRoot(),
+    GraphQLModule.forRoot({ autoSchemaFile: true, installSubscriptionHandlers: true }),
+    RedisModule,
+    EstimateModule,
+  ],
   controllers: [],
   providers: [],
 })

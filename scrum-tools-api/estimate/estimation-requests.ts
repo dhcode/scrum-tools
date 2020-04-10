@@ -8,7 +8,7 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
-import { ArgsType, Field, Int } from '@nestjs/graphql';
+import { ArgsType, Field, ID, Int } from '@nestjs/graphql';
 
 @ArgsType()
 export class CreateSessionArgs {
@@ -34,7 +34,7 @@ export class CreateSessionArgs {
 
 @ArgsType()
 export class GetSessionArgs {
-  @Field()
+  @Field(() => ID)
   @IsString()
   @MaxLength(10)
   @IsNotEmpty()
@@ -55,7 +55,7 @@ export class GetSessionArgs {
 
 @ArgsType()
 export class JoinSessionArgs {
-  @Field()
+  @Field(() => ID)
   @IsString()
   @MaxLength(10)
   @IsNotEmpty()
@@ -71,11 +71,4 @@ export class JoinSessionArgs {
   @MinLength(3)
   @MaxLength(20)
   name: string;
-}
-
-export class GetActiveTopicDto {
-  @IsString()
-  @MaxLength(10)
-  @IsNotEmpty()
-  sessionId: string;
 }

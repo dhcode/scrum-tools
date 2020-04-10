@@ -3,12 +3,13 @@ import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { EstimationViewComponent } from './estimation-view/estimation-view.component';
-import { EstimationSessionsViewComponent } from './estimation-sessions-view/estimation-sessions-view.component';
+import { GraphQLModule } from './graphql.module';
+import { HttpClientModule } from '@angular/common/http';
+import { EstimationModule } from './estimation/estimation.module';
 
 @NgModule({
-  declarations: [AppComponent, EstimationViewComponent, EstimationSessionsViewComponent],
-  imports: [BrowserModule, AppRoutingModule],
+  declarations: [AppComponent],
+  imports: [BrowserModule, AppRoutingModule, GraphQLModule, HttpClientModule, EstimationModule],
   providers: [],
   bootstrap: [AppComponent],
 })

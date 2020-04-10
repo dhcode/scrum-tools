@@ -19,12 +19,19 @@
     "@angular/platform-browser": "~9.1.0",
     "@angular/platform-browser-dynamic": "~9.1.0",
     "@angular/router": "~9.1.0",
+    "apollo-angular": "^1.8.0",
     "class-validator": "^0.11.1",
     "ngx-webstorage-service": "^4.1.0",
     "rxjs": "~6.5.4",
     "socket.io-client": "^2.3.0",
     "tslib": "^1.10.0",
-    "zone.js": "~0.10.2"
+    "zone.js": "~0.10.2",
+    "apollo-angular-link-http": "^1.9.0",
+    "apollo-link": "^1.2.11",
+    "apollo-client": "^2.6.0",
+    "apollo-cache-inmemory": "^1.6.0",
+    "graphql-tag": "^2.10.0",
+    "graphql": "^14.5.0"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.901.0",

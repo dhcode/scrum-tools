@@ -1,0 +1,82 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type EstimationMember {
+  id: ID!
+  name: String!
+  joinedAt: DateTime!
+  lastSeenAt: DateTime!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type TopicVote {
+  memberId: ID!
+  memberName: String!
+  votedAt: DateTime!
+  vote: Int
+}
+
+type EstimationTopic {
+  id: ID!
+  sessionId: String!
+  name: String!
+  description: String!
+  options: [Int!]!
+  startedAt: DateTime!
+  endedAt: DateTime!
+  votes: [TopicVote!]
+  members: [TopicVote!]!
+}
+
+type EstimationSession {
+  id: ID!
+  name: String!
+  description: String!
+  joinSecret: String!
+  adminSecret: String
+  createdAt: DateTime!
+  modifiedAt: DateTime!
+  defaultOptions: [Int!]!
+  activeTopic: EstimationTopic
+  topics(limit: Int = 10): [EstimationTopic!]
+  members: [EstimationMember!]
+}
+
+type VoteAddedInfo {
+  votedAt: DateTime!
+  member: EstimationMember!
+}
+
+type VoteEndedInfo {
+  topic: EstimationMember!
+  votes: [TopicVote!]!
+}
+
+type Query {
+  estimationSession(id: ID!, joinSecret: String!, adminSecret: String): EstimationSession!
+}
+
+type Mutation {
+  createSession(name: String!, description: String!, defaultOptions: Int): EstimationSession!
+  joinSession(
+    id: ID!
+    joinSecret: String!
+
+    """Display name of the member who joins."""
+    name: String!
+  ): EstimationMember!
+}
+
+type Subscription {
+  memberUpdated(id: ID!, joinSecret: String!, adminSecret: String): EstimationMember!
+  memberAdded(id: ID!, joinSecret: String!, adminSecret: String): EstimationMember!
+  memberRemoved(id: ID!, joinSecret: String!, adminSecret: String): EstimationMember!
+  topicCreated(id: ID!, joinSecret: String!, adminSecret: String): EstimationTopic!
+  voteAdded(id: ID!, joinSecret: String!, adminSecret: String): VoteAddedInfo!
+  voteEnded(id: ID!, joinSecret: String!, adminSecret: String): VoteEndedInfo!
+}

@@ -1,30 +1,30 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, ID, Int, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 export class EstimationMember {
-  @Field()
+  @Field(() => ID)
   id: string;
 
   @Field()
   name: string;
 
   @Field()
-  joinedAt: string;
+  joinedAt: Date;
 
   @Field()
-  lastSeenAt: string;
+  lastSeenAt: Date;
 }
 
 @ObjectType()
 export class TopicVote {
-  @Field()
+  @Field(() => ID)
   memberId: string;
 
   @Field()
   memberName: string;
 
   @Field()
-  votedAt: string;
+  votedAt: Date;
 
   @Field(() => Int, { nullable: true })
   vote?: number;
@@ -32,7 +32,7 @@ export class TopicVote {
 
 @ObjectType()
 export class EstimationTopic {
-  @Field()
+  @Field(() => ID)
   id: string;
 
   @Field()
@@ -48,10 +48,10 @@ export class EstimationTopic {
   options: number[];
 
   @Field()
-  startedAt: string;
+  startedAt: Date;
 
   @Field()
-  endedAt: string;
+  endedAt: Date;
 
   @Field(() => [TopicVote], { nullable: true })
   votes?: TopicVote[];
@@ -59,7 +59,7 @@ export class EstimationTopic {
 
 @ObjectType()
 export class EstimationSession {
-  @Field()
+  @Field(() => ID)
   id: string;
 
   @Field()
@@ -75,10 +75,10 @@ export class EstimationSession {
   adminSecret: string;
 
   @Field()
-  createdAt: string;
+  createdAt: Date;
 
   @Field()
-  modifiedAt: string;
+  modifiedAt: Date;
 
   @Field(() => [Int])
   defaultOptions: number[];
@@ -91,4 +91,22 @@ export class EstimationSession {
 
   @Field(() => [EstimationMember], { nullable: true })
   members?: EstimationMember[];
+}
+
+@ObjectType()
+export class VoteAddedInfo {
+  @Field()
+  votedAt: Date;
+
+  @Field(() => EstimationMember)
+  member: EstimationMember;
+}
+
+@ObjectType()
+export class VoteEndedInfo {
+  @Field(() => EstimationMember)
+  topic: EstimationTopic;
+
+  @Field(() => [TopicVote])
+  votes: TopicVote[];
 }

@@ -2,27 +2,29 @@ import { Injectable, OnApplicationShutdown } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as IORedis from 'ioredis';
 import { Redis } from 'ioredis';
-import { randomString } from '../shared/utils';
+import { eJsonParse, eJsonStringify, randomString } from '../shared/utils';
+import { RedisPubSub } from 'graphql-redis-subscriptions';
 
 @Injectable()
 export class RedisService implements OnApplicationShutdown {
   readonly redisUri: string;
   readonly redis: Redis;
+  readonly pubSub: RedisPubSub;
 
   constructor(configService: ConfigService) {
     this.redisUri = configService.get<string>('REDIS_URI');
     this.redis = new IORedis(this.redisUri);
+    this.pubSub = new RedisPubSub({
+      publisher: new IORedis(this.redisUri),
+      subscriber: new IORedis(this.redisUri),
+      serializer: eJsonStringify,
+      deserializer: eJsonParse,
+    });
   }
 
-  static redisProvider = {
-    provide: 'REDIS',
-    useFactory: async (redisService: RedisService) => {
-      return redisService.redis;
-    },
-    inject: [RedisService],
-  };
-
   onApplicationShutdown(): any {
+    console.log('disconnect');
+    this.pubSub.close();
     this.redis.disconnect();
   }
 
@@ -75,7 +77,7 @@ export class RedisService implements OnApplicationShutdown {
     const key = collection + ':' + listId;
     const id = randomString();
     obj.id = id;
-    const value = JSON.stringify(obj);
+    const value = eJsonStringify(obj);
 
     const multi = this.redis.multi().hsetnx(key, id, value);
     if (expire) {
@@ -93,7 +95,7 @@ export class RedisService implements OnApplicationShutdown {
     const key = collection + ':' + listId;
     const rawResult = await this.redis.hget(key, id);
     if (rawResult) {
-      return JSON.parse(rawResult);
+      return eJsonParse(rawResult);
     } else {
       return undefined;
     }
@@ -101,7 +103,7 @@ export class RedisService implements OnApplicationShutdown {
 
   async updateListEntry(collection: string, listId: string, id: string, obj: Record<string, any>): Promise<void> {
     const key = collection + ':' + listId;
-    await this.redis.hset(key, id, JSON.stringify(obj));
+    await this.redis.hset(key, id, eJsonStringify(obj));
   }
 
   async removeListEntry(collection: string, listId: string, id: string): Promise<void> {
@@ -136,7 +138,7 @@ export function hmsetTransformer(args: IORedis.ValueType[]): IORedis.ValueType[]
   if (args.length === 2) {
     if (typeof args[1] === 'object' && args[1] !== null) {
       const obj = args[1];
-      return [args[0], ...Object.keys(obj).flatMap((key) => [key, JSON.stringify(obj[key])])];
+      return [args[0], ...Object.keys(obj).flatMap((key) => [key, eJsonStringify(obj[key])])];
     }
   }
   return args;
@@ -149,7 +151,7 @@ export function hgetallTransformer(result: string[]) {
     }
     const data = {};
     for (let i = 0; i < result.length; i += 2) {
-      data[result[i]] = JSON.parse(result[i + 1]);
+      data[result[i]] = eJsonParse(result[i + 1]);
     }
     return data;
   }

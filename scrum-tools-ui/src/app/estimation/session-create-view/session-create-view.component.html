@@ -1,0 +1,19 @@
+<h2>Create new estimation session</h2>
+<p>
+  After you have created a session, you can invite your team members and start estimating topics.
+</p>
+<form [formGroup]="form" (submit)="createSession()">
+
+  <label for="sessionName">Session name</label>
+  <input id="sessionName" type="text" formControlName="name" autofocus placeholder="Project X" autocomplete="off">
+  <app-form-errors [control]="name">
+    <ng-template appFormErrorMsg="required" let-info>The session name is required</ng-template>
+  </app-form-errors>
+
+  <button [disabled]="form.invalid">Create session</button>
+
+  <p>
+    Created sessions will expire 90 days after inactivity.
+  </p>
+
+</form>

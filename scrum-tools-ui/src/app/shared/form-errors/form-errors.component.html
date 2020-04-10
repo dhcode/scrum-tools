@@ -1,0 +1,8 @@
+<div class="error" *ngFor="let msg of messageTemplates">
+  <ng-container *ngTemplateOutlet="msg.tpl; context: msg.ctx"></ng-container>
+</div>
+
+<ng-template appFormErrorMsg="required" let-info>Required</ng-template>
+<ng-template appFormErrorMsg="minlength" let-info>At least {{info.requiredLength}} characters are required</ng-template>
+<ng-template appFormErrorMsg="maxlength" let-info>More than {{info.requiredLength}} characters are not allowed</ng-template>
+<ng-template appFormErrorMsg="pattern" let-info>Input does not match {{info.pattern}}</ng-template>

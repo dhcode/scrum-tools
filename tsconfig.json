@@ -14,8 +14,13 @@
       "scrum-tools-api": ["scrum-tools-api"]
     }
   },
+  "include": [
+    "scrum-tools-api/**/*.ts",
+    "scrum-tools-backend/**/*.ts"
+  ],
   "exclude": [
     "node_modules",
-    "dist"
+    "dist",
+    "scrum-tools-ui"
   ]
 }

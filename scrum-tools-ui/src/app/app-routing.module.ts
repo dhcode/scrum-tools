@@ -1,16 +1,15 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { EstimationViewComponent } from './estimation-view/estimation-view.component';
-import { EstimationSessionsViewComponent } from './estimation-sessions-view/estimation-sessions-view.component';
 
 const routes: Routes = [
   {
-    path: 'estimation/:sessionId',
-    component: EstimationViewComponent,
+    path: 'e',
+    loadChildren: () => import('./estimation/estimation.module').then((m) => m.EstimationModule),
   },
   {
-    path: 'estimation',
-    component: EstimationSessionsViewComponent,
+    path: '',
+    pathMatch: 'full',
+    redirectTo: 'e',
   },
 ];
 

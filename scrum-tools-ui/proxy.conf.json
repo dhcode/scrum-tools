@@ -1,5 +1,5 @@
 {
-  "/socket.io": {
+  "/graphql": {
     "target": "http://localhost:3000",
     "ws": true
   }

@@ -1,0 +1,31 @@
+
+<h2>Estimation sessions</h2>
+
+<div class="buttons">
+  <a [routerLink]="'master/new'" class="btn">Create new session</a>
+  <a [routerLink]="'join'" class="btn">Join session</a>
+</div>
+
+<app-loading-spinner></app-loading-spinner>
+
+<div *ngIf="!sessions.length" class="primary-note">
+  You have not yet created or joined any session.
+</div>
+
+<a *ngFor="let session of sessions" [routerLink]="session.adminSecret ? ['master', session.id] : [session.id, session.joinSecret]" class="session-entry">
+  <span>
+    {{session.name}}
+  </span>
+  <span class="status" [class.active]="session.activeTopic">
+    ⬤ {{session.activeTopic ? 'Ongoing' : ''}}
+  </span>
+  <span class="arrow">›</span>
+  <span class="members">
+    {{session.members.length}} members online
+    <ng-container *ngIf="session.adminSecret">
+      | <span class="master">Master</span>
+    </ng-container>
+    | <app-time-ago [date]="session.modifiedAt"></app-time-ago>
+
+  </span>
+</a>

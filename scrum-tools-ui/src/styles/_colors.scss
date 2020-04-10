@@ -1,4 +1,8 @@
 
-$accent-color: #0099c4;
+$accent-color: #00689f;
 $accent-color-hover: lighten($accent-color, 20%);
-$border-color: #c4bec0;
+$accent-color-active: lighten($accent-color, 10%);
+$border-color: #ccc;
+$note-bg-color: #eee;
+$note-color: #746e70;
+$error-color: #e00009;

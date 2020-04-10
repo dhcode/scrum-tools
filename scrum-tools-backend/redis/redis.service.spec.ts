@@ -21,13 +21,15 @@ describe('RedisService', () => {
   });
 
   it('should transform hashes', async () => {
-    const testHash = { name: 'test', count: 54, list: [true, false] };
+    const date = new Date();
+    const testHash = { name: 'test', count: 54, list: [true, false], date: date };
     await service.redis.hmset('test', testHash);
 
     const result = await service.redis.hgetall('test');
     expect(result).toBeTruthy();
     expect(result.name).toBe('test');
     expect(result.count).toBe(54);
+    expect(result.date).toEqual(date);
     expect(result.list[0]).toBe(true);
     expect(result.list[1]).toBe(false);
   });
@@ -37,6 +39,7 @@ describe('RedisService', () => {
       id: null,
       name: 'Object 1',
       active: true,
+      date: new Date(),
     };
 
     await service.insertObject('tests', testObj);
@@ -52,11 +55,13 @@ describe('RedisService', () => {
       id: null,
       name: 'E1',
       active: true,
+      joined: new Date(),
     };
     const entry2 = {
       id: null,
       name: 'E2',
       active: false,
+      joined: new Date(),
     };
 
     await service.insertListEntry('testList', 'list1', entry);

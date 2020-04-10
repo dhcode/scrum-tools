@@ -1,4 +1,7 @@
 @import "styles/colors";
+@import "styles/inputs";
+@import "styles/buttons";
+
 html {
   font-family: Verdana, sans-serif;
   font-size: 12pt;
@@ -19,19 +22,7 @@ a {
   }
 }
 
-button {
-  border: none;
-  background-color: $accent-color;
-  color: white;
-  padding: 1rem;
-  font-size: 1rem;
-  cursor: pointer;
 
-  &:hover {
-    background-color: $accent-color-hover;
-  }
-
-}
 
 app-root {
   display: grid;
@@ -53,7 +44,24 @@ app-root {
 }
 
 
+.primary-note {
+  text-align: center;
+  font-size: 1.5em;
+  color: $note-color;
+  background-color: $note-bg-color;
+  padding: 2rem 0;
+  margin: 1rem 0;
+}
 
 @media only screen and (min-width: 800px) {
+  .main-nav {
+    width: 800px;
+    margin: 0 auto;
+  }
+  main {
+    width: 800px;
+    margin: 0 auto;
+  }
+
 
 }

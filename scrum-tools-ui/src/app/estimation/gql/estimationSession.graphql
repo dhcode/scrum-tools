@@ -1,0 +1,18 @@
+query estimationSession($id: ID!, $joinSecret: String!, $adminSecret: String) {
+  estimationSession(id: $id, joinSecret: $joinSecret, adminSecret: $adminSecret) {
+    id
+    name
+    description
+    joinSecret
+    adminSecret
+    modifiedAt
+    createdAt
+    defaultOptions
+    activeTopic {
+      id
+      name
+      description
+      options
+    }
+  }
+}

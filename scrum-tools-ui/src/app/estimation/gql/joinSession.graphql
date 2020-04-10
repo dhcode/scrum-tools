@@ -1,0 +1,8 @@
+mutation joinSession($id: ID!, $joinSecret: String!, $name: String!) {
+  joinSession(id: $id, joinSecret: $joinSecret, name: $name) {
+    id
+    joinedAt
+    lastSeenAt
+    name
+  }
+}

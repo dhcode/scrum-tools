@@ -1,5 +1,11 @@
 @import "src/styles/colors";
 
+:host {
+  display: block;
+  text-align: center;
+  margin: 1rem 0;
+}
+
 .lds-roller {
   display: inline-block;
   position: relative;

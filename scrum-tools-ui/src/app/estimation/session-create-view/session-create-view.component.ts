@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { CreateSessionGQL } from '../../../generated/graphql';
 import { EstimationService } from '../services/estimation.service';
 
 @Component({
@@ -11,13 +12,14 @@ export class SessionCreateViewComponent implements OnInit {
   name = new FormControl('', [Validators.required, Validators.minLength(4), Validators.maxLength(100)]);
   form = new FormGroup({ name: this.name });
 
-  constructor(private estimationService: EstimationService) {}
+  constructor(private createSessionGql: CreateSessionGQL, private estimationService: EstimationService) {}
 
   ngOnInit(): void {}
 
   createSession() {
-    this.estimationService.createSession(this.name.value).subscribe((result) => {
+    this.createSessionGql.mutate({ name: this.name.value }).subscribe((result) => {
       console.log('result', result);
+      this.estimationService.addKnownSession(result.data.createSession);
     });
     this.form.reset();
   }

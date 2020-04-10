@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { EstimationSession, EstimationTopic } from 'scrum-tools-api/estimate/estimation-models';
 import { subDays } from 'date-fns';
+import { EstimationService } from '../services/estimation.service';
 
 @Component({
   selector: 'app-session-overview',
@@ -29,7 +30,7 @@ export class SessionOverviewComponent implements OnInit {
     },
   ];
 
-  constructor() {}
+  constructor(private estimationService: EstimationService) {}
 
   ngOnInit(): void {}
 }

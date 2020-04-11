@@ -145,18 +145,26 @@ export type CreateSessionMutationVariables = {
 
 export type CreateSessionMutation = { createSession: Pick<EstimationSession, 'id' | 'joinSecret' | 'adminSecret'> };
 
-export type EstimationSessionQueryVariables = {
+export type EstimationSessionOverviewQueryVariables = {
   id: Scalars['ID'];
   joinSecret: Scalars['String'];
   adminSecret?: Maybe<Scalars['String']>;
 };
 
-export type EstimationSessionQuery = {
+export type EstimationSessionOverviewQuery = {
   estimationSession: Pick<
     EstimationSession,
-    'id' | 'description' | 'joinSecret' | 'modifiedAt' | 'createdAt' | 'defaultOptions'
-  > & { activeTopic?: Maybe<Pick<EstimationTopic, 'id' | 'name' | 'description' | 'options'>> };
+    'id' | 'name' | 'description' | 'joinSecret' | 'adminSecret' | 'modifiedAt'
+  > & { activeTopic?: Maybe<Pick<EstimationTopic, 'id'>>; members?: Maybe<Array<Pick<EstimationMember, 'id'>>> };
 };
+
+export type JoinSessionMutationVariables = {
+  id: Scalars['ID'];
+  joinSecret: Scalars['String'];
+  name: Scalars['String'];
+};
+
+export type JoinSessionMutation = { joinSession: Pick<EstimationMember, 'id' | 'joinedAt' | 'lastSeenAt' | 'name'> };
 
 export const CreateSessionDocument = gql`
   mutation createSession($name: String!) {
@@ -174,20 +182,20 @@ export const CreateSessionDocument = gql`
 export class CreateSessionGQL extends Apollo.Mutation<CreateSessionMutation, CreateSessionMutationVariables> {
   document = CreateSessionDocument;
 }
-export const EstimationSessionDocument = gql`
-  query estimationSession($id: ID!, $joinSecret: String!, $adminSecret: String) {
+export const EstimationSessionOverviewDocument = gql`
+  query estimationSessionOverview($id: ID!, $joinSecret: String!, $adminSecret: String) {
     estimationSession(id: $id, joinSecret: $joinSecret, adminSecret: $adminSecret) {
       id
+      name
       description
       joinSecret
+      adminSecret
       modifiedAt
-      createdAt
-      defaultOptions
       activeTopic {
         id
-        name
-        description
-        options
+      }
+      members {
+        id
       }
     }
   }
@@ -196,6 +204,26 @@ export const EstimationSessionDocument = gql`
 @Injectable({
   providedIn: 'root',
 })
-export class EstimationSessionGQL extends Apollo.Query<EstimationSessionQuery, EstimationSessionQueryVariables> {
-  document = EstimationSessionDocument;
+export class EstimationSessionOverviewGQL extends Apollo.Query<
+  EstimationSessionOverviewQuery,
+  EstimationSessionOverviewQueryVariables
+> {
+  document = EstimationSessionOverviewDocument;
+}
+export const JoinSessionDocument = gql`
+  mutation joinSession($id: ID!, $joinSecret: String!, $name: String!) {
+    joinSession(id: $id, joinSecret: $joinSecret, name: $name) {
+      id
+      joinedAt
+      lastSeenAt
+      name
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class JoinSessionGQL extends Apollo.Mutation<JoinSessionMutation, JoinSessionMutationVariables> {
+  document = JoinSessionDocument;
 }

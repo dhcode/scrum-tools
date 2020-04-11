@@ -1,10 +1,15 @@
 import { Inject, Injectable } from '@angular/core';
 import { LOCAL_STORAGE, StorageService } from 'ngx-webstorage-service';
-import { Apollo } from 'apollo-angular';
-import { EstimationSession } from '../../../generated/graphql';
-import { BehaviorSubject } from 'rxjs';
+import {
+  EstimationSession,
+  EstimationSessionOverviewGQL,
+  EstimationSessionOverviewQuery,
+} from '../../../generated/graphql';
+import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 
 export type SessionInfo = Pick<EstimationSession, 'id' | 'joinSecret' | 'adminSecret'>;
+export type SessionOverview = EstimationSessionOverviewQuery['estimationSession'];
 
 const knownSessionsKey = 'knownSessions';
 
@@ -14,7 +19,10 @@ const knownSessionsKey = 'knownSessions';
 export class EstimationService {
   knownSessions$ = new BehaviorSubject<SessionInfo[]>([]);
 
-  constructor(@Inject(LOCAL_STORAGE) private storage: StorageService) {
+  constructor(
+    @Inject(LOCAL_STORAGE) private storage: StorageService,
+    private sessionOverviewGQL: EstimationSessionOverviewGQL,
+  ) {
     this.knownSessions$.next(this.getKnownSessions());
   }
 
@@ -38,5 +46,15 @@ export class EstimationService {
       this.storage.set(knownSessionsKey, sessions);
       this.knownSessions$.next(sessions);
     }
+  }
+
+  watchSessionForOverview(info: SessionInfo): Observable<SessionOverview> {
+    return this.sessionOverviewGQL.watch(info).valueChanges.pipe(map((data) => data.data.estimationSession));
+  }
+
+  getSessionsOverview(): Observable<SessionOverview[]> {
+    return this.knownSessions$.pipe(
+      switchMap((sessionInfos) => combineLatest(sessionInfos.map((info) => this.watchSessionForOverview(info)))),
+    );
   }
 }

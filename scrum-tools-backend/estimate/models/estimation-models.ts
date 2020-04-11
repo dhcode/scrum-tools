@@ -13,6 +13,9 @@ export class EstimationMember {
 
   @Field()
   lastSeenAt: Date;
+
+  @Field({ nullable: true })
+  secret?: string;
 }
 
 @ObjectType()

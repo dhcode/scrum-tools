@@ -5,14 +5,10 @@ import {
   EstimationTopic,
   VoteAddedInfo,
   VoteEndedInfo,
-} from '../../../scrum-tools-api/estimate/estimation-models';
+} from '../models/estimation-models';
 import { EstimationService, sessionRoomName } from '../estimation/estimation.service';
 import { HttpException, HttpStatus } from '@nestjs/common';
-import {
-  CreateSessionArgs,
-  GetSessionArgs,
-  JoinSessionArgs,
-} from '../../../scrum-tools-api/estimate/estimation-requests';
+import { CreateSessionArgs, GetSessionArgs, JoinSessionArgs } from '../models/estimation-requests';
 import { RedisService } from '../../redis/redis.service';
 
 @Resolver(() => EstimationSession)

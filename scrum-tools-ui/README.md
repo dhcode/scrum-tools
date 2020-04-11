@@ -1,5 +1,8 @@
 # Scrum Tools UI
 
+
+## Development
+
 Start the backend in the parent folder with:
 
     docker run -p 6379:6379 --name redis redis:5.0.8-alpine
@@ -9,6 +12,10 @@ Start the UI in this folder with:
 
     npm run start
     
+Generate graphql based Angular services:
+
+    npm run generate
+
 
 ## Estimation concept
 

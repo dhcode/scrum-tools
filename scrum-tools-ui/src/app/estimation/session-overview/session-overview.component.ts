@@ -1,14 +1,15 @@
-import { Component, OnInit } from '@angular/core';
-import { EstimationSession, EstimationTopic } from 'scrum-tools-api/estimate/estimation-models';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { subDays } from 'date-fns';
 import { EstimationService } from '../services/estimation.service';
+import { EstimationSession, EstimationTopic } from '../../../generated/graphql';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-session-overview',
   templateUrl: './session-overview.component.html',
   styleUrls: ['./session-overview.component.scss'],
 })
-export class SessionOverviewComponent implements OnInit {
+export class SessionOverviewComponent implements OnInit, OnDestroy {
   sessions: Partial<EstimationSession>[] = [
     {
       id: 'a',
@@ -30,7 +31,17 @@ export class SessionOverviewComponent implements OnInit {
     },
   ];
 
+  private sub: Subscription;
+
   constructor(private estimationService: EstimationService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.sub = this.estimationService.getSessionsOverview().subscribe((sessions) => {
+      console.log('got sessions', sessions);
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.sub.unsubscribe();
+  }
 }

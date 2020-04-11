@@ -15,7 +15,6 @@
     }
   },
   "include": [
-    "scrum-tools-api/**/*.ts",
     "scrum-tools-backend/**/*.ts"
   ],
   "exclude": [

@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { EstimationService } from './estimation.service';
+import { EstimationService, sessionRoomName } from './estimation.service';
 import { ConfigModule } from '@nestjs/config';
 import { RedisService } from '../../redis/redis.service';
 import { RedisModule } from '../../redis/redis.module';
@@ -25,20 +25,26 @@ describe('EstimationService', () => {
   });
 
   it('should insert and find session', async () => {
-    const estimationSession = await service.createEstimationSession('My session', 'This is a nice session');
-    expect(estimationSession.name).toBe('My session');
-    expect(estimationSession.description).toBe('This is a nice session');
-    expect(estimationSession.defaultOptions).toEqual([1, 2, 3, 5, 8, 13, 20, 40, 0]);
+    const session = await service.createEstimationSession('My session', 'This is a nice session');
+    expect(session.name).toBe('My session');
+    expect(session.description).toBe('This is a nice session');
+    expect(session.defaultOptions).toEqual([1, 2, 3, 5, 8, 13, 20, 40, 0]);
 
-    const result = await service.getEstimationSession(estimationSession.id);
+    const eventsIterator = redisService.pubSub.asyncIterator(sessionRoomName(session.id));
+
+    const result = await service.getEstimationSession(session.id);
     expect(result.name).toBe('My session');
     expect(result.description).toBe('This is a nice session');
     expect(result.defaultOptions).toEqual([1, 2, 3, 5, 8, 13, 20, 40, 0]);
 
-    await service.updateEstimationSession(estimationSession.id, { description: 'changed description' });
-    const result2 = await service.getEstimationSession(estimationSession.id);
+    const nextEvent = eventsIterator.next();
+    await service.updateEstimationSession(session.id, { description: 'changed description' });
+    const result2 = await service.getEstimationSession(session.id);
     expect(result2.name).toBe('My session');
     expect(result2.description).toBe('changed description');
+
+    const event = (await nextEvent).value;
+    expect(event.sessionUpdated).toEqual(result2);
   });
 
   it('should add, update and remove members', async () => {

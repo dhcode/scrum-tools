@@ -5,6 +5,9 @@ export class LoadingState {
   loading = false;
   error = null;
   loadedAt: Date;
+  get loaded(): boolean {
+    return !this.loading && !this.error;
+  }
 }
 
 export function trackLoading<T>(state: LoadingState): OperatorFunction<T, T> {

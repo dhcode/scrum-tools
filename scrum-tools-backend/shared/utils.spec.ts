@@ -1,4 +1,4 @@
-import { eJsonParse, eJsonStringify, randomString } from './utils';
+import { eJsonParse, eJsonStringify, mapAsync, randomString } from './utils';
 
 describe('Utils', () => {
   it('should generate random string', () => {
@@ -34,5 +34,20 @@ describe('Utils', () => {
     };
     const str = eJsonStringify(data);
     expect(eJsonParse(str)).toEqual(data);
+  });
+
+  it('should map async iterator', async () => {
+    async function* testData(len: number) {
+      for (let i = 0; i < len; i++) {
+        yield i;
+      }
+    }
+
+    const iterator: AsyncIterator<number> = testData(3);
+    const newIterator = mapAsync(iterator, (item) => item + 10);
+    await expect(newIterator.next()).resolves.toEqual({ value: 10, done: false });
+    await expect(newIterator.next()).resolves.toEqual({ value: 11, done: false });
+    await expect(newIterator.next()).resolves.toEqual({ value: 12, done: false });
+    await expect(newIterator.next()).resolves.toEqual({ value: undefined, done: true });
   });
 });

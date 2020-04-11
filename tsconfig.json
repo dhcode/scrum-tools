@@ -9,12 +9,10 @@
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
-    "incremental": true,
-    "paths": {
-      "scrum-tools-api": ["scrum-tools-api"]
-    }
+    "incremental": true
   },
   "include": [
+    "test/**/*.ts",
     "scrum-tools-backend/**/*.ts"
   ],
   "exclude": [

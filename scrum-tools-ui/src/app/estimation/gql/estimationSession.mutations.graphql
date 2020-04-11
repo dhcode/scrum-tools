@@ -1,3 +1,11 @@
+mutation createSession($name: String!) {
+  createSession(name: $name, description: "") {
+    id
+    joinSecret
+    adminSecret
+  }
+}
+
 mutation joinSession($id: ID!, $joinSecret: String!, $name: String!) {
   joinSession(id: $id, joinSecret: $joinSecret, name: $name) {
     id

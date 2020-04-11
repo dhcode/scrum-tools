@@ -1,0 +1,57 @@
+query estimationSessionOverview($id: ID!, $joinSecret: String!, $adminSecret: String) {
+  estimationSession(id: $id, joinSecret: $joinSecret, adminSecret: $adminSecret) {
+    id
+    name
+    description
+    joinSecret
+    adminSecret
+    modifiedAt
+    activeTopic {
+      id
+    }
+    members {
+      id
+    }
+  }
+}
+
+query estimationSessionDetails($id: ID!, $joinSecret: String!, $adminSecret: String) {
+  estimationSession(id: $id, joinSecret: $joinSecret, adminSecret: $adminSecret) {
+    id
+    name
+    description
+    joinSecret
+    adminSecret
+    modifiedAt
+    activeTopic {
+      id
+      description
+      name
+      startedAt
+      endedAt
+      options
+      votes {
+        memberId
+        memberName
+        vote
+        votedAt
+      }
+    }
+    members {
+      id
+      lastSeenAt
+      name
+    }
+    topics(limit: 10) {
+      id
+      description
+      name
+      startedAt
+      endedAt
+      votes {
+        memberName
+        vote
+      }
+    }
+  }
+}

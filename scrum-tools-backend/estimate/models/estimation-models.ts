@@ -107,7 +107,7 @@ export class VoteAddedInfo {
 
 @ObjectType()
 export class VoteEndedInfo {
-  @Field(() => EstimationMember)
+  @Field(() => EstimationTopic)
   topic: EstimationTopic;
 
   @Field(() => [TopicVote])

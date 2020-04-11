@@ -7,8 +7,9 @@
 </div>
 
 <app-loading-spinner *ngIf="loadingState.loading"></app-loading-spinner>
+<app-error-message *ngIf="loadingState.error" [error]="loadingState.error"></app-error-message>
 
-<div *ngIf="!sessions.length" class="primary-note">
+<div *ngIf="!sessions.length && loadingState.loaded" class="primary-note">
   You have not yet created or joined any session.
 </div>
 

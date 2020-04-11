@@ -113,3 +113,22 @@ export class JoinSessionArgs {
   @MaxLength(20)
   name: string;
 }
+
+@ArgsType()
+export class LeaveSessionArgs {
+  @Field(() => ID)
+  @IsString()
+  @MaxLength(10)
+  @IsNotEmpty()
+  id: string;
+
+  @Field()
+  @IsString()
+  @MaxLength(10)
+  memberId: string;
+
+  @Field()
+  @IsString()
+  @MaxLength(16)
+  secret: string;
+}

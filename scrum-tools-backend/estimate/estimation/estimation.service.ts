@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { EstimationMember, EstimationSession, EstimationTopic, TopicVote } from '../models/estimation-models';
 import { randomString } from '../../shared/utils';
 import { RedisService } from '../../redis/redis.service';
+import { EstimationError } from '../models/estimation-error';
 
 const expireSeconds = 90 * 86400;
 enum Store {
@@ -63,7 +64,7 @@ export class EstimationService {
   ): Promise<EstimationSession> {
     const session = await this.getEstimationSession(id);
     if (!session) {
-      throw new Error('Session not found');
+      throw new EstimationError(404, 'sessionNotFound', `Session with the id '${id}' was not found`);
     }
 
     if ('name' in data) {
@@ -109,7 +110,7 @@ export class EstimationService {
 
     const members = await this.getMembers(sessionId);
     if (members.find((m) => m.name === name)) {
-      throw new Error(`Member with name '${name}' already exists`);
+      throw new EstimationError(409, 'memberExists', `Member with name '${name}' already exists`);
     }
 
     await this.redis.insertListEntry(Store.members, sessionId, member, expireSeconds);
@@ -135,13 +136,15 @@ export class EstimationService {
     return this.redis.getListEntryById<EstimationMember>(Store.members, sessionId, memberId);
   }
 
-  async removeMember(sessionId: string, memberId: string): Promise<void> {
+  async removeMember(sessionId: string, memberId: string): Promise<boolean> {
     const member = await this.getMember(sessionId, memberId);
     if (member) {
       await this.redis.removeListEntry(Store.members, sessionId, memberId);
       await this.updateEstimationExpiry(sessionId);
       this.notifySession(sessionId, SessionNotify.memberRemoved, member);
+      return true;
     }
+    return false;
   }
 
   async getMembers(sessionId: string): Promise<EstimationMember[]> {
@@ -210,7 +213,7 @@ export class EstimationService {
     };
     const topic = await this.getTopic(topicId);
     if (topic.endedAt) {
-      throw new Error('Vote could not be added');
+      throw new EstimationError(400, 'voteEnded', 'Vote could not be added, because voting has ended.');
     }
     await this.redis.updateListEntry(Store.vote, topicId, member.id, vote);
     await this.redis.updateExpiry(Store.vote, topicId, expireSeconds);
@@ -230,7 +233,7 @@ export class EstimationService {
   async endVote(topicId: string): Promise<void> {
     const topic = await this.getTopic(topicId);
     if (topic.endedAt) {
-      throw new Error('Vote already ended');
+      throw new EstimationError(400, 'voteEnded', 'Voting has already ended.');
     }
 
     topic.endedAt = new Date();

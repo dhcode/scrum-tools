@@ -1,0 +1,83 @@
+subscription sessionUpdated($id: ID!, $joinSecret: String!, $adminSecret: String) {
+  sessionUpdated(id: $id, joinSecret: $joinSecret, adminSecret: $adminSecret) {
+    id
+    name
+    description
+    joinSecret
+    adminSecret
+    modifiedAt
+    activeTopic {
+      id
+    }
+    members {
+      id
+      name
+      lastSeenAt
+    }
+  }
+}
+
+subscription memberAdded($id: ID!, $joinSecret: String!) {
+  memberAdded(id: $id, joinSecret: $joinSecret) {
+    id
+    lastSeenAt
+    name
+  }
+}
+
+subscription memberUpdated($id: ID!, $joinSecret: String!) {
+  memberUpdated(id: $id, joinSecret: $joinSecret) {
+    id
+    lastSeenAt
+    name
+  }
+}
+
+subscription memberRemoved($id: ID!, $joinSecret: String!) {
+  memberRemoved(id: $id, joinSecret: $joinSecret) {
+    id
+    lastSeenAt
+    name
+  }
+}
+
+subscription topicCreated($id: ID!, $joinSecret: String!) {
+  topicCreated(id: $id, joinSecret: $joinSecret) {
+    id
+    name
+    description
+    startedAt
+    endedAt
+    options
+    votes {
+      memberId
+      memberName
+      vote
+      votedAt
+    }
+  }
+}
+
+subscription voteAdded($id: ID!, $joinSecret: String!) {
+  voteAdded(id: $id, joinSecret: $joinSecret) {
+    member {
+      id
+    }
+    votedAt
+  }
+}
+
+subscription voteEnded($id: ID!, $joinSecret: String!) {
+  voteEnded(id: $id, joinSecret: $joinSecret) {
+    topic {
+      id
+      endedAt
+    }
+    votes {
+      memberId
+      memberName
+      vote
+      votedAt
+    }
+  }
+}

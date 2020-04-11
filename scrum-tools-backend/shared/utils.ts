@@ -30,3 +30,20 @@ export function eJsonParse(encoded: string): any {
     return value;
   });
 }
+
+/**
+ * Maps all not done values
+ */
+export function mapAsync<T, R>(iterator: AsyncIterator<T>, mapFn: (item: T) => R): AsyncIterator<R> {
+  return {
+    next(): Promise<IteratorResult<R, any>> {
+      return iterator.next().then((res) => {
+        if (res.done) {
+          return res;
+        } else {
+          return { value: mapFn(res.value), done: false };
+        }
+      });
+    },
+  };
+}

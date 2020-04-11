@@ -1,0 +1,6 @@
+@import "src/styles/colors";
+
+.error-message {
+  background-color: lighten($error-color, 20%);
+  color: $error-color;
+}

@@ -7,10 +7,17 @@ import {
   VoteEndedInfo,
 } from '../models/estimation-models';
 import { EstimationService, SessionNotify, sessionRoomName } from '../estimation/estimation.service';
-import { HttpException, HttpStatus } from '@nestjs/common';
-import { CreateSessionArgs, GetSessionArgs, JoinSessionArgs, UpdateSessionArgs } from '../models/estimation-requests';
+import {
+  CreateSessionArgs,
+  GetSessionArgs,
+  JoinSessionArgs,
+  LeaveSessionArgs,
+  UpdateSessionArgs,
+} from '../models/estimation-requests';
 import { RedisService } from '../../redis/redis.service';
 import { clearMember, clearSession } from '../models/model.utils';
+import { EstimationError } from '../models/estimation-error';
+import { mapAsync } from '../../shared/utils';
 
 @Resolver(() => EstimationSession)
 export class EstimationSessionResolver {
@@ -27,7 +34,11 @@ export class EstimationSessionResolver {
         return { ...session, adminSecret: null };
       }
     } else {
-      throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+      throw new EstimationError(
+        404,
+        'sessionNotFound',
+        `Session with id '${args.id}' was not found or invalid secret provided.`,
+      );
     }
   }
 
@@ -64,7 +75,7 @@ export class EstimationSessionResolver {
   async updateSession(@Args() args: UpdateSessionArgs) {
     const session = await this.estimationSession({ ...args, joinSecret: '' });
     if (!session.adminSecret) {
-      throw new Error('Not allowed to modify session');
+      throw new EstimationError(403, 'updateNotAllowed', 'Session id or admin secret are not correct.');
     }
     return this.estimationService.updateEstimationSession(args.id, args);
   }
@@ -75,13 +86,25 @@ export class EstimationSessionResolver {
     return await this.estimationService.addMember(session.id, args.name);
   }
 
+  @Mutation(() => Boolean)
+  async leaveSession(@Args() args: LeaveSessionArgs): Promise<boolean> {
+    const member = await this.estimationService.getMember(args.id, args.memberId);
+    if (!member || member.secret !== args.secret) {
+      throw new EstimationError(404, 'memberNotFound', 'Member not found or invalid secret');
+    }
+    return await this.estimationService.removeMember(args.id, args.memberId);
+  }
+
   @Subscription(() => EstimationSession, {
     filter: (payload) => !!payload[SessionNotify.sessionUpdated],
-    resolve: (payload, vars, ctx: any) => clearSession(payload[SessionNotify.sessionUpdated], ctx.isAdmin),
   })
   async sessionUpdated(@Args() args: GetSessionArgs, @Context() ctx: any) {
     const session = await this.checkSessionAccess(args, ctx);
-    return this.redisService.pubSub.asyncIterator(sessionRoomName(session.id));
+    return mapAsync(this.redisService.pubSub.asyncIterator(sessionRoomName(session.id)), (payload) => {
+      console.log('map', payload);
+      payload[SessionNotify.sessionUpdated] = clearSession(payload[SessionNotify.sessionUpdated], ctx.isAdmin);
+      return payload;
+    });
   }
 
   @Subscription(() => EstimationMember, {

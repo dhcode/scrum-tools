@@ -53,7 +53,7 @@ type VoteAddedInfo {
 }
 
 type VoteEndedInfo {
-  topic: EstimationMember!
+  topic: EstimationTopic!
   votes: [TopicVote!]!
 }
 
@@ -88,6 +88,7 @@ type Mutation {
     """Display name of the member who joins."""
     name: String!
   ): EstimationMember!
+  leaveSession(id: ID!, memberId: String!, secret: String!): Boolean!
 }
 
 type Subscription {

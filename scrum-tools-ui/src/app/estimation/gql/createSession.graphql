@@ -1,7 +1,0 @@
-mutation createSession($name: String!) {
-  createSession(name: $name, description: "") {
-    id
-    joinSecret
-    adminSecret
-  }
-}

@@ -1,4 +1,4 @@
-import { Injectable, OnApplicationShutdown } from '@nestjs/common';
+import { Inject, Injectable, OnApplicationShutdown, Provider } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as IORedis from 'ioredis';
 import { Redis } from 'ioredis';
@@ -8,22 +8,35 @@ import { RedisPubSub } from 'graphql-redis-subscriptions';
 @Injectable()
 export class RedisService implements OnApplicationShutdown {
   readonly redisUri: string;
-  readonly redis: Redis;
   readonly pubSub: RedisPubSub;
 
-  constructor(configService: ConfigService) {
+  constructor(configService: ConfigService, @Inject('REDIS_CONNECTION') public redis: Redis) {
     this.redisUri = configService.get<string>('REDIS_URI');
-    this.redis = new IORedis(this.redisUri);
     this.pubSub = new RedisPubSub({
-      publisher: new IORedis(this.redisUri),
+      publisher: this.redis,
       subscriber: new IORedis(this.redisUri),
       serializer: eJsonStringify,
       deserializer: eJsonParse,
     });
   }
 
+  static redisConnectionProvider: Provider = {
+    provide: 'REDIS_CONNECTION',
+    useFactory: (configService: ConfigService) => {
+      const redisUri = configService.get<string>('REDIS_URI');
+      const redis = new IORedis(redisUri, { lazyConnect: true });
+      return new Promise((resolve, reject) => {
+        redis.once('error', (err) => {
+          redis.disconnect();
+          reject(err);
+        });
+        redis.connect(() => resolve(redis));
+      });
+    },
+    inject: [ConfigService],
+  };
+
   onApplicationShutdown(): any {
-    console.log('disconnect');
     this.pubSub.close();
     this.redis.disconnect();
   }

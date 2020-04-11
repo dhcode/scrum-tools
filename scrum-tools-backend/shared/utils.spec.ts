@@ -1,6 +1,12 @@
-import { eJsonParse, eJsonStringify } from './utils';
+import { eJsonParse, eJsonStringify, randomString } from './utils';
 
 describe('Utils', () => {
+  it('should generate random string', () => {
+    expect(randomString(5)).toHaveLength(5);
+    expect(randomString(10)).toHaveLength(10);
+    expect(randomString()).toHaveLength(10);
+  });
+
   it('should serialize', () => {
     const dt = new Date();
     expect(eJsonStringify(dt)).toEqual('{"$date":"' + dt.toISOString() + '"}');

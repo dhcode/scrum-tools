@@ -7,6 +7,7 @@ type EstimationMember {
   name: String!
   joinedAt: DateTime!
   lastSeenAt: DateTime!
+  secret: String
 }
 
 """
@@ -30,7 +31,6 @@ type EstimationTopic {
   startedAt: DateTime!
   endedAt: DateTime!
   votes: [TopicVote!]
-  members: [TopicVote!]!
 }
 
 type EstimationSession {
@@ -62,7 +62,25 @@ type Query {
 }
 
 type Mutation {
-  createSession(name: String!, description: String!, defaultOptions: Int): EstimationSession!
+  createSession(name: String!, description: String!, defaultOptions: [Int!]): EstimationSession!
+  updateSession(
+    id: ID!
+
+    """To verify access to the session."""
+    adminSecret: String!
+
+    """Provided to modify the name"""
+    name: String
+
+    """Provided to modify the description"""
+    description: String
+
+    """Provided to modify the join secret"""
+    joinSecret: String
+
+    """Provided to modify the default options"""
+    defaultOptions: [Int!]
+  ): EstimationSession!
   joinSession(
     id: ID!
     joinSecret: String!
@@ -73,6 +91,7 @@ type Mutation {
 }
 
 type Subscription {
+  sessionUpdated(id: ID!, joinSecret: String!, adminSecret: String): EstimationSession!
   memberUpdated(id: ID!, joinSecret: String!, adminSecret: String): EstimationMember!
   memberAdded(id: ID!, joinSecret: String!, adminSecret: String): EstimationMember!
   memberRemoved(id: ID!, joinSecret: String!, adminSecret: String): EstimationMember!

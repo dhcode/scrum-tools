@@ -6,7 +6,7 @@
   <a [routerLink]="'join'" class="btn">Join session</a>
 </div>
 
-<app-loading-spinner></app-loading-spinner>
+<app-loading-spinner *ngIf="loadingState.loading"></app-loading-spinner>
 
 <div *ngIf="!sessions.length" class="primary-note">
   You have not yet created or joined any session.

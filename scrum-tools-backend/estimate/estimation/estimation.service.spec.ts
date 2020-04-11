@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { EstimationService } from './estimation.service';
 import { ConfigModule } from '@nestjs/config';
 import { RedisService } from '../../redis/redis.service';
+import { RedisModule } from '../../redis/redis.module';
 
 describe('EstimationService', () => {
   let module: TestingModule;
@@ -9,10 +10,9 @@ describe('EstimationService', () => {
   let redisService: RedisService;
 
   beforeEach(async () => {
-    process.env.REDIS_URI = 'redis://127.0.0.1:6379/2';
     module = await Test.createTestingModule({
-      imports: [ConfigModule.forRoot({ envFilePath: '.env_test' })],
-      providers: [EstimationService, RedisService],
+      imports: [RedisModule, ConfigModule.forRoot({ envFilePath: '.env_test' })],
+      providers: [EstimationService],
     }).compile();
 
     service = module.get<EstimationService>(EstimationService);
@@ -24,7 +24,7 @@ describe('EstimationService', () => {
     await module.close();
   });
 
-  it('should insert and find', async () => {
+  it('should insert and find session', async () => {
     const estimationSession = await service.createEstimationSession('My session', 'This is a nice session');
     expect(estimationSession.name).toBe('My session');
     expect(estimationSession.description).toBe('This is a nice session');
@@ -34,15 +34,23 @@ describe('EstimationService', () => {
     expect(result.name).toBe('My session');
     expect(result.description).toBe('This is a nice session');
     expect(result.defaultOptions).toEqual([1, 2, 3, 5, 8, 13, 20, 40, 0]);
+
+    await service.updateEstimationSession(estimationSession.id, { description: 'changed description' });
+    const result2 = await service.getEstimationSession(estimationSession.id);
+    expect(result2.name).toBe('My session');
+    expect(result2.description).toBe('changed description');
   });
 
-  it('should add and remove members', async () => {
+  it('should add, update and remove members', async () => {
     const session = await service.createEstimationSession('My session', 'This is a nice session');
     const member = await service.addMember(session.id, 'Tester');
     const members = await service.getMembers(session.id);
     expect(members.length).toBe(1);
     expect(members[0].id).toBe(member.id);
     expect(members[0].name).toBe('Tester');
+
+    const updatedMember = await service.updateMemberLastSeen(session.id, member.id);
+    expect(updatedMember.lastSeenAt.getTime()).toBeGreaterThan(member.lastSeenAt.getTime());
 
     await service.removeMember(session.id, member.id);
     const result2 = await service.getMembers(session.id);

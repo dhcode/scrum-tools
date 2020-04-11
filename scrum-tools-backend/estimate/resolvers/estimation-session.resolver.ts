@@ -1,4 +1,4 @@
-import { Args, Int, Mutation, Parent, Query, ResolveField, Resolver, Subscription } from '@nestjs/graphql';
+import { Args, Context, Int, Mutation, Parent, Query, ResolveField, Resolver, Subscription } from '@nestjs/graphql';
 import {
   EstimationMember,
   EstimationSession,
@@ -6,10 +6,11 @@ import {
   VoteAddedInfo,
   VoteEndedInfo,
 } from '../models/estimation-models';
-import { EstimationService, sessionRoomName } from '../estimation/estimation.service';
+import { EstimationService, SessionNotify, sessionRoomName } from '../estimation/estimation.service';
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { CreateSessionArgs, GetSessionArgs, JoinSessionArgs } from '../models/estimation-requests';
+import { CreateSessionArgs, GetSessionArgs, JoinSessionArgs, UpdateSessionArgs } from '../models/estimation-requests';
 import { RedisService } from '../../redis/redis.service';
+import { clearMember, clearSession } from '../models/model.utils';
 
 @Resolver(() => EstimationSession)
 export class EstimationSessionResolver {
@@ -30,6 +31,12 @@ export class EstimationSessionResolver {
     }
   }
 
+  private async checkSessionAccess(args: GetSessionArgs, ctx: any): Promise<EstimationSession> {
+    const session = await this.estimationSession(args);
+    ctx.isAdmin = !!session.adminSecret;
+    return session;
+  }
+
   @ResolveField(() => EstimationTopic)
   async activeTopic(@Parent() session: EstimationSession): Promise<EstimationTopic> {
     return this.estimationService.getActiveTopic(session.id);
@@ -45,12 +52,21 @@ export class EstimationSessionResolver {
 
   @ResolveField(() => [EstimationMember])
   async members(@Parent() session: EstimationSession): Promise<EstimationMember[]> {
-    return this.estimationService.getMembers(session.id);
+    return (await this.estimationService.getMembers(session.id)).map(clearMember);
   }
 
   @Mutation(() => EstimationSession)
   async createSession(@Args() args: CreateSessionArgs) {
     return this.estimationService.createEstimationSession(args.name, args.description, args.defaultOptions);
+  }
+
+  @Mutation(() => EstimationSession)
+  async updateSession(@Args() args: UpdateSessionArgs) {
+    const session = await this.estimationSession({ ...args, joinSecret: '' });
+    if (!session.adminSecret) {
+      throw new Error('Not allowed to modify session');
+    }
+    return this.estimationService.updateEstimationSession(args.id, args);
   }
 
   @Mutation(() => EstimationMember)
@@ -59,54 +75,66 @@ export class EstimationSessionResolver {
     return await this.estimationService.addMember(session.id, args.name);
   }
 
-  @Subscription(() => EstimationMember, {
-    filter: (payload) => !!payload['memberUpdated'],
+  @Subscription(() => EstimationSession, {
+    filter: (payload) => !!payload[SessionNotify.sessionUpdated],
+    resolve: (payload, vars, ctx: any) => clearSession(payload[SessionNotify.sessionUpdated], ctx.isAdmin),
   })
-  async memberUpdated(@Args() args: GetSessionArgs) {
-    const session = await this.estimationSession(args);
+  async sessionUpdated(@Args() args: GetSessionArgs, @Context() ctx: any) {
+    const session = await this.checkSessionAccess(args, ctx);
     return this.redisService.pubSub.asyncIterator(sessionRoomName(session.id));
   }
 
   @Subscription(() => EstimationMember, {
-    filter: (payload) => {
-      console.log('payload', payload);
-      return !!payload['memberAdded'];
-    },
+    filter: (payload) => !!payload[SessionNotify.memberUpdated],
+    resolve: (payload) => clearMember(payload[SessionNotify.memberUpdated]),
   })
-  async memberAdded(@Args() args: GetSessionArgs) {
-    const session = await this.estimationSession(args);
+  async memberUpdated(@Args() args: GetSessionArgs, @Context() ctx: any) {
+    const session = await this.checkSessionAccess(args, ctx);
     return this.redisService.pubSub.asyncIterator(sessionRoomName(session.id));
   }
 
   @Subscription(() => EstimationMember, {
-    filter: (payload) => !!payload['memberRemoved'],
+    filter: (payload) => !!payload[SessionNotify.memberAdded],
+    resolve: (payload) => clearMember(payload[SessionNotify.memberAdded]),
   })
-  async memberRemoved(@Args() args: GetSessionArgs) {
-    const session = await this.estimationSession(args);
+  async memberAdded(@Args() args: GetSessionArgs, @Context() ctx: any) {
+    const session = await this.checkSessionAccess(args, ctx);
+    return this.redisService.pubSub.asyncIterator(sessionRoomName(session.id));
+  }
+
+  @Subscription(() => EstimationMember, {
+    filter: (payload) => !!payload[SessionNotify.memberRemoved],
+    resolve: (payload) => clearMember(payload[SessionNotify.memberRemoved]),
+  })
+  async memberRemoved(@Args() args: GetSessionArgs, @Context() ctx: any) {
+    const session = await this.checkSessionAccess(args, ctx);
     return this.redisService.pubSub.asyncIterator(sessionRoomName(session.id));
   }
 
   @Subscription(() => EstimationTopic, {
-    filter: (payload) => !!payload['topicCreated'],
+    filter: (payload) => !!payload[SessionNotify.topicCreated],
+    resolve: (payload) => payload[SessionNotify.topicCreated],
   })
-  async topicCreated(@Args() args: GetSessionArgs) {
-    const session = await this.estimationSession(args);
+  async topicCreated(@Args() args: GetSessionArgs, @Context() ctx: any) {
+    const session = await this.checkSessionAccess(args, ctx);
     return this.redisService.pubSub.asyncIterator(sessionRoomName(session.id));
   }
 
   @Subscription(() => VoteAddedInfo, {
-    filter: (payload) => !!payload['voteAdded'],
+    filter: (payload) => !!payload[SessionNotify.voteAdded],
+    resolve: (payload) => payload[SessionNotify.voteAdded],
   })
-  async voteAdded(@Args() args: GetSessionArgs) {
-    const session = await this.estimationSession(args);
+  async voteAdded(@Args() args: GetSessionArgs, @Context() ctx: any) {
+    const session = await this.checkSessionAccess(args, ctx);
     return this.redisService.pubSub.asyncIterator(sessionRoomName(session.id));
   }
 
   @Subscription(() => VoteEndedInfo, {
-    filter: (payload) => !!payload['voteEnded'],
+    filter: (payload) => !!payload[SessionNotify.voteEnded],
+    resolve: (payload) => payload[SessionNotify.voteEnded],
   })
-  async voteEnded(@Args() args: GetSessionArgs) {
-    const session = await this.estimationSession(args);
+  async voteEnded(@Args() args: GetSessionArgs, @Context() ctx: any) {
+    const session = await this.checkSessionAccess(args, ctx);
     return this.redisService.pubSub.asyncIterator(sessionRoomName(session.id));
   }
 }

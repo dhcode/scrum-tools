@@ -1,9 +1,12 @@
 export function randomString(len = 10) {
+  const chars = 'abcdefghijklmnopqrstuvwxyz';
+  const numbers = '0123456789';
+  const pool = chars + chars.toUpperCase() + numbers;
   const str = [];
-  for (let i = 0; i < len; i += 10) {
-    str.push(Math.random().toString(36).substr(2, 10));
+  for (let i = 0; i < len; i++) {
+    str.push(pool[Math.floor(Math.random() * pool.length)]);
   }
-  return str.join('').substr(0, len);
+  return str.join('');
 }
 
 export function eJsonStringify(obj: any): string {

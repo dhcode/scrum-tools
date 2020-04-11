@@ -3,6 +3,7 @@ import { subDays } from 'date-fns';
 import { EstimationService } from '../services/estimation.service';
 import { EstimationSession, EstimationTopic } from '../../../generated/graphql';
 import { Subscription } from 'rxjs';
+import { LoadingState, trackLoading } from '../../shared/loading.util';
 
 @Component({
   selector: 'app-session-overview',
@@ -31,14 +32,19 @@ export class SessionOverviewComponent implements OnInit, OnDestroy {
     },
   ];
 
+  loadingState = new LoadingState();
+
   private sub: Subscription;
 
   constructor(private estimationService: EstimationService) {}
 
   ngOnInit(): void {
-    this.sub = this.estimationService.getSessionsOverview().subscribe((sessions) => {
-      console.log('got sessions', sessions);
-    });
+    this.sub = this.estimationService
+      .getSessionsOverview()
+      .pipe(trackLoading(this.loadingState))
+      .subscribe((sessions) => {
+        console.log('got sessions', sessions);
+      });
   }
 
   ngOnDestroy(): void {

@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { CreateSessionGQL } from '../../../generated/graphql';
 import { EstimationService } from '../services/estimation.service';
+import { Router } from '@angular/router';
+import { LoadingState, trackLoading } from '../../shared/loading.util';
 
 @Component({
   selector: 'app-session-create-view',
@@ -12,15 +14,26 @@ export class SessionCreateViewComponent implements OnInit {
   name = new FormControl('', [Validators.required, Validators.minLength(4), Validators.maxLength(100)]);
   form = new FormGroup({ name: this.name });
 
-  constructor(private createSessionGql: CreateSessionGQL, private estimationService: EstimationService) {}
+  loadingState = new LoadingState();
+
+  constructor(
+    private createSessionGql: CreateSessionGQL,
+    private estimationService: EstimationService,
+    private router: Router,
+  ) {}
 
   ngOnInit(): void {}
 
   createSession() {
-    this.createSessionGql.mutate({ name: this.name.value }).subscribe((result) => {
-      console.log('result', result);
-      this.estimationService.addKnownSession(result.data.createSession);
-    });
+    this.createSessionGql
+      .mutate({ name: this.name.value })
+      .pipe(trackLoading(this.loadingState))
+      .subscribe((result) => {
+        console.log('result', result);
+        const session = result.data.createSession;
+        this.estimationService.addKnownSession(session);
+        this.router.navigate(['e', 'master', session.id]);
+      });
     this.form.reset();
   }
 }

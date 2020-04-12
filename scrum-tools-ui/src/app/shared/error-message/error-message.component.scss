@@ -1,6 +1,9 @@
 @import "src/styles/colors";
 
 .error-message {
-  background-color: lighten($error-color, 20%);
+  background-color: $error-bg-color;
+  border: 1px solid $error-bg-color;
   color: $error-color;
+  padding: 0 1rem;
+  margin: 1rem 0;
 }

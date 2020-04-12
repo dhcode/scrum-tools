@@ -114,7 +114,7 @@ export class EstimationService {
     }
 
     await this.redis.insertListEntry(Store.members, sessionId, member, expireSeconds);
-    await this.updateEstimationExpiry(sessionId);
+    await this.updateEstimationSession(sessionId, {});
     this.notifySession(sessionId, SessionNotify.memberAdded, member);
     return member;
   }
@@ -140,7 +140,7 @@ export class EstimationService {
     const member = await this.getMember(sessionId, memberId);
     if (member) {
       await this.redis.removeListEntry(Store.members, sessionId, memberId);
-      await this.updateEstimationExpiry(sessionId);
+      await this.updateEstimationSession(sessionId, {});
       this.notifySession(sessionId, SessionNotify.memberRemoved, member);
       return true;
     }
@@ -240,6 +240,8 @@ export class EstimationService {
     await this.redis.updateObject(Store.topic, topicId, {
       endedAt: topic.endedAt,
     });
+
+    await this.updateEstimationSession(topic.sessionId, {});
 
     this.notifySession(topic.sessionId, SessionNotify.voteEnded, {
       topic: topic,

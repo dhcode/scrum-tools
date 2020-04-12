@@ -1,1 +1,28 @@
-<p>session-join-view works!</p>
+<h2>Join a session</h2>
+<p>
+  If you have a session ID and password, you can join the session here.
+</p>
+<form [formGroup]="form" (submit)="joinSession()">
+
+  <label for="name">Your name</label>
+  <input id="name" type="text" formControlName="name" autofocus>
+  <app-form-errors [control]="name">
+    <ng-template appFormErrorMsg="required" let-info>Your name is required</ng-template>
+  </app-form-errors>
+
+  <label for="sessionId">Session ID</label>
+  <input id="sessionId" type="text" formControlName="sessionId" autocomplete="off">
+  <app-form-errors [control]="sessionId">
+    <ng-template appFormErrorMsg="required" let-info>The session id is required</ng-template>
+  </app-form-errors>
+
+  <label for="joinSecret">Password</label>
+  <input id="joinSecret" type="password" formControlName="joinSecret">
+  <app-form-errors [control]="joinSecret"></app-form-errors>
+
+  <button [disabled]="form.invalid || loadingState.loading">Join session</button>
+
+  <app-loading-spinner *ngIf="loadingState.loading"></app-loading-spinner>
+  <app-error-message *ngIf="loadingState.error" [error]="loadingState.error"></app-error-message>
+
+</form>

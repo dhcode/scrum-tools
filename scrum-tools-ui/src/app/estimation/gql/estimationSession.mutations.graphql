@@ -12,5 +12,6 @@ mutation joinSession($id: ID!, $joinSecret: String!, $name: String!) {
     joinedAt
     lastSeenAt
     name
+    secret
   }
 }

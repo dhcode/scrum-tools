@@ -14,12 +14,16 @@ export function extractGraphQLError(err: any): { code: string; message: string }
   }
 }
 
-export class GraphQLUiError extends Error {
+export class CodedError extends Error {
   code: string;
+  constructor(code: string, message: string) {
+    super(message);
+  }
+}
 
+export class GraphQLUiError extends CodedError {
   constructor(err: any) {
     const info = extractGraphQLError(err);
-    super(info.message);
-    this.code = info.code;
+    super(info.code, info.message);
   }
 }

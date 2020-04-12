@@ -10,7 +10,10 @@
     <ng-template appFormErrorMsg="required" let-info>The session name is required</ng-template>
   </app-form-errors>
 
-  <button [disabled]="form.invalid">Create session</button>
+  <button [disabled]="form.invalid || loadingState.loading">Create session</button>
+
+  <app-loading-spinner *ngIf="loadingState.loading"></app-loading-spinner>
+  <app-error-message *ngIf="loadingState.error" [error]="loadingState.error"></app-error-message>
 
   <p>
     Created sessions will expire 90 days after inactivity.

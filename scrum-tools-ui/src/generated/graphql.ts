@@ -175,7 +175,9 @@ export type JoinSessionMutationVariables = {
   name: Scalars['String'];
 };
 
-export type JoinSessionMutation = { joinSession: Pick<EstimationMember, 'id' | 'joinedAt' | 'lastSeenAt' | 'name'> };
+export type JoinSessionMutation = {
+  joinSession: Pick<EstimationMember, 'id' | 'joinedAt' | 'lastSeenAt' | 'name' | 'secret'>;
+};
 
 export type EstimationSessionOverviewQueryVariables = {
   id: Scalars['ID'];
@@ -309,6 +311,7 @@ export const JoinSessionDocument = gql`
       joinedAt
       lastSeenAt
       name
+      secret
     }
   }
 `;

@@ -1,5 +1,4 @@
 import {
-  AfterContentInit,
   AfterViewInit,
   Component,
   ContentChildren,
@@ -71,7 +70,7 @@ export class FormErrorsComponent implements DoCheck, AfterViewInit {
         console.log('errInfo', errInfo);
         this.messageTemplates.push({
           ctx: { $implicit: errInfo },
-          tpl: tpl,
+          tpl,
         });
       }
     }

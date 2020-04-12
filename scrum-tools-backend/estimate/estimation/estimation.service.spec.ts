@@ -33,6 +33,7 @@ describe('EstimationService', () => {
     const eventsIterator = redisService.pubSub.asyncIterator(sessionRoomName(session.id));
 
     const result = await service.getEstimationSession(session.id);
+    expect(result).toBeTruthy();
     expect(result.name).toBe('My session');
     expect(result.description).toBe('This is a nice session');
     expect(result.defaultOptions).toEqual([1, 2, 3, 5, 8, 13, 20, 40, 0]);
@@ -40,6 +41,7 @@ describe('EstimationService', () => {
     const nextEvent = eventsIterator.next();
     await service.updateEstimationSession(session.id, { description: 'changed description' });
     const result2 = await service.getEstimationSession(session.id);
+    expect(result2).toBeTruthy();
     expect(result2.name).toBe('My session');
     expect(result2.description).toBe('changed description');
 

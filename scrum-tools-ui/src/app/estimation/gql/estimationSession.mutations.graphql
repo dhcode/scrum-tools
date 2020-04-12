@@ -15,3 +15,7 @@ mutation joinSession($id: ID!, $joinSecret: String!, $name: String!) {
     secret
   }
 }
+
+mutation pingSessionMember($id: ID!, $memberId: String!, $secret: String!) {
+  pingSessionMember(id: $id, memberId: $memberId, secret: $secret)
+}

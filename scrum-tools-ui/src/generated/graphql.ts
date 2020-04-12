@@ -10,7 +10,7 @@ export type Scalars = {
   Int: number;
   Float: number;
   /** A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format. */
-  DateTime: Date;
+  DateTime: string;
 };
 
 export type EstimationMember = {
@@ -55,6 +55,7 @@ export type Mutation = {
   updateSession: EstimationSession;
   joinSession: EstimationMember;
   leaveSession: Scalars['Boolean'];
+  pingSessionMember: Scalars['Boolean'];
 };
 
 export type MutationCreateSessionArgs = {
@@ -79,6 +80,12 @@ export type MutationJoinSessionArgs = {
 };
 
 export type MutationLeaveSessionArgs = {
+  id: Scalars['ID'];
+  memberId: Scalars['String'];
+  secret: Scalars['String'];
+};
+
+export type MutationPingSessionMemberArgs = {
   id: Scalars['ID'];
   memberId: Scalars['String'];
   secret: Scalars['String'];
@@ -178,6 +185,14 @@ export type JoinSessionMutationVariables = {
 export type JoinSessionMutation = {
   joinSession: Pick<EstimationMember, 'id' | 'joinedAt' | 'lastSeenAt' | 'name' | 'secret'>;
 };
+
+export type PingSessionMemberMutationVariables = {
+  id: Scalars['ID'];
+  memberId: Scalars['String'];
+  secret: Scalars['String'];
+};
+
+export type PingSessionMemberMutation = Pick<Mutation, 'pingSessionMember'>;
 
 export type EstimationSessionOverviewQueryVariables = {
   id: Scalars['ID'];
@@ -321,6 +336,21 @@ export const JoinSessionDocument = gql`
 })
 export class JoinSessionGQL extends Apollo.Mutation<JoinSessionMutation, JoinSessionMutationVariables> {
   document = JoinSessionDocument;
+}
+export const PingSessionMemberDocument = gql`
+  mutation pingSessionMember($id: ID!, $memberId: String!, $secret: String!) {
+    pingSessionMember(id: $id, memberId: $memberId, secret: $secret)
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class PingSessionMemberGQL extends Apollo.Mutation<
+  PingSessionMemberMutation,
+  PingSessionMemberMutationVariables
+> {
+  document = PingSessionMemberDocument;
 }
 export const EstimationSessionOverviewDocument = gql`
   query estimationSessionOverview($id: ID!, $joinSecret: String!, $adminSecret: String) {

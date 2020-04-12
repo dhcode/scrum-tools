@@ -89,6 +89,7 @@ type Mutation {
     name: String!
   ): EstimationMember!
   leaveSession(id: ID!, memberId: String!, secret: String!): Boolean!
+  pingSessionMember(id: ID!, memberId: String!, secret: String!): Boolean!
 }
 
 type Subscription {

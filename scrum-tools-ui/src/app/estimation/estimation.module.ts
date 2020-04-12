@@ -9,6 +9,8 @@ import { SessionJoinViewComponent } from './session-join-view/session-join-view.
 import { ReactiveFormsModule } from '@angular/forms';
 import { SessionCreateViewComponent } from './session-create-view/session-create-view.component';
 import { SharedModule } from '../shared/shared.module';
+import { MembersComponent } from './members/members.component';
+import { OnlineStatusPipe } from './members/online-status.pipe';
 
 @NgModule({
   declarations: [
@@ -17,6 +19,8 @@ import { SharedModule } from '../shared/shared.module';
     SessionMemberViewComponent,
     SessionJoinViewComponent,
     SessionCreateViewComponent,
+    MembersComponent,
+    OnlineStatusPipe,
   ],
   imports: [CommonModule, ReactiveFormsModule, EstimationRoutingModule, SharedModule],
 })

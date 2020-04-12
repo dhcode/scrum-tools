@@ -132,3 +132,22 @@ export class LeaveSessionArgs {
   @MaxLength(16)
   secret: string;
 }
+
+@ArgsType()
+export class PingMemberArgs {
+  @Field(() => ID)
+  @IsString()
+  @MaxLength(10)
+  @IsNotEmpty()
+  id: string;
+
+  @Field()
+  @IsString()
+  @MaxLength(10)
+  memberId: string;
+
+  @Field()
+  @IsString()
+  @MaxLength(16)
+  secret: string;
+}

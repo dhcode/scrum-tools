@@ -1,5 +1,4 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { GraphQLError } from 'graphql';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { extractGraphQLError } from '../error-handling.util';
 
 @Component({

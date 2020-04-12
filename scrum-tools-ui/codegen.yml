@@ -11,4 +11,4 @@ generates:
 config:
   skipTypename: true
   scalars:
-    DateTime: Date
+    DateTime: string

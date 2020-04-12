@@ -1,0 +1,19 @@
+<div *ngIf="members?.length" class="members">
+
+  <div *ngFor="let member of members" class="member">
+    <div class="name">
+      <span class="status" [ngClass]="member.lastSeenAt | onlineStatus" [title]="member.lastSeenAt | date: 'medium'">⬤</span>
+      {{member.name}}
+    </div>
+
+    <div class="buttons" *ngIf="isAdmin">
+      <button class="btn" type="button">Remove</button>
+    </div>
+
+  </div>
+
+</div>
+
+<div *ngIf="!members?.length" class="primary-note">
+  No members have joined this session.
+</div>

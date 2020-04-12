@@ -1,0 +1,50 @@
+@import "src/styles/colors";
+
+.members {
+  display: grid;
+  grid-gap: 1rem;
+  grid-template-columns: 1fr;
+
+  .member {
+    background: $note-bg-color;
+
+    .name {
+      padding: 1rem;
+      border-bottom: $border-color;
+    }
+
+    .lastSeen {
+      padding: 1rem;
+      font-size: 0.8em;
+    }
+
+    .status {
+      margin-right:0.5rem;
+      color: $note-color;
+      &.online {
+        color: $online-color;
+      }
+      &.pending {
+        color: $pending-color;
+      }
+      &.offline {
+        color: $error-color;
+      }
+    }
+
+
+  }
+
+}
+
+@media only screen and (min-width: 400px) {
+  .members {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media only screen and (min-width: 800px) {
+  .members {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}

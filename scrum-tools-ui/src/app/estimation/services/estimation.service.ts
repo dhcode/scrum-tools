@@ -1,21 +1,24 @@
 import { Inject, Injectable } from '@angular/core';
 import { LOCAL_STORAGE, StorageService } from 'ngx-webstorage-service';
 import {
+  EstimationMember,
   EstimationSessionDetailsGQL,
   EstimationSessionDetailsQuery,
   EstimationSessionOverviewGQL,
   EstimationSessionOverviewQuery,
+  EstimationTopic,
   MemberAddedGQL,
   MemberRemovedGQL,
   MemberUpdatedGQL,
   SessionUpdatedGQL,
   TopicCreatedGQL,
+  TopicVote,
   VoteAddedGQL,
   VoteEndedGQL,
 } from '../../../generated/graphql';
-import { BehaviorSubject, combineLatest, merge, Observable, of, Subscription, throwError } from 'rxjs';
-import { catchError, map, share, switchMap, tap } from 'rxjs/operators';
-import { CodedError, GraphQLUiError } from '../../shared/error-handling.util';
+import { BehaviorSubject, combineLatest, merge, Observable, of, Subscription } from 'rxjs';
+import { catchError, map, share, switchMap } from 'rxjs/operators';
+import { GraphQLUiError } from '../../shared/error-handling.util';
 import { Apollo } from 'apollo-angular';
 import gql from 'graphql-tag';
 
@@ -29,6 +32,12 @@ export interface SessionInfo {
 
 export type SessionOverview = EstimationSessionOverviewQuery['estimationSession'];
 export type SessionDetails = EstimationSessionDetailsQuery['estimationSession'];
+export type SessionDetailMember = Pick<EstimationMember, 'id' | 'lastSeenAt' | 'name'>;
+export type SessionDetailTopic = Pick<
+  EstimationTopic,
+  'id' | 'description' | 'name' | 'startedAt' | 'endedAt' | 'options'
+>;
+export type SessionDetailTopicVote = Pick<TopicVote, 'memberId' | 'memberName' | 'vote' | 'votedAt'>;
 
 const knownSessionsKey = 'knownSessions';
 
@@ -112,11 +121,11 @@ export class EstimationService {
     }
   }
 
-  getSession(sessionId: string): Observable<SessionDetails> {
-    const sessionInfo = this.getKnownSessions().find((s) => s.id === sessionId);
-    if (!sessionInfo) {
-      return throwError(new CodedError('sessionInfoNotFound', 'No session info was found'));
-    }
+  getKnownSession(sessionId: string): SessionInfo {
+    return this.getKnownSessions().find((s) => s.id === sessionId);
+  }
+
+  getSession(sessionInfo: SessionInfo): Observable<SessionDetails> {
     return this.sessionDetailsGQL.watch(sessionInfo).valueChanges.pipe(map((change) => change.data.estimationSession));
   }
 
@@ -184,25 +193,22 @@ export class EstimationService {
     }
   }
 
-  private subscribeSession(info: SessionOverview, details = false) {
-    const subs: Observable<any>[] = [
+  subscribeSession(info: SessionInfo) {
+    return merge(
       this.sessionUpdatedGQL.subscribe(info),
       this.memberAddedGQL.subscribe(info),
       this.memberRemovedGQL.subscribe(info),
-    ];
+    );
+  }
 
-    if (details) {
-      subs.push(
-        this.memberUpdatedGQL
-          .subscribe(info)
-          .pipe(tap((data) => this.updateMembersInCache(info.id, data.data.memberRemoved))),
-        this.topicCreatedGQL.subscribe(info),
-        this.voteAddedGQL.subscribe(info),
-        this.voteEndedGQL.subscribe(info),
-      );
-    }
-
-    return merge(...subs);
+  subscribeSessionWithDetails(info: SessionInfo) {
+    return merge(
+      this.subscribeSession(info),
+      this.memberUpdatedGQL.subscribe(info),
+      this.topicCreatedGQL.subscribe(info),
+      this.voteAddedGQL.subscribe(info),
+      this.voteEndedGQL.subscribe(info),
+    );
   }
 
   private updateMembersInCache(sessionId: string, member, remove = false) {

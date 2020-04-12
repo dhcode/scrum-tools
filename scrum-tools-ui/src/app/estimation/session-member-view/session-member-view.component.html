@@ -1,1 +1,16 @@
-<p>session-member-view works!</p>
+<ng-container *ngIf="loadingState.loaded && session">
+  <div class="basic-info">
+    <h2>{{session.name}}</h2>
+    <pre>{{session.description}}</pre>
+  </div>
+
+  <div class="members">
+    <app-members [members]="session.members" [votes]="session.activeTopic?.votes"></app-members>
+
+  </div>
+
+
+</ng-container>
+
+<app-loading-spinner *ngIf="loadingState.loading"></app-loading-spinner>
+<app-error-message *ngIf="loadingState.error" [error]="loadingState.error"></app-error-message>

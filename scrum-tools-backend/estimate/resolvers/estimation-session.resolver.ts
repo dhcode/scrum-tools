@@ -12,6 +12,7 @@ import {
   GetSessionArgs,
   JoinSessionArgs,
   LeaveSessionArgs,
+  PingMemberArgs,
   UpdateSessionArgs,
 } from '../models/estimation-requests';
 import { RedisService } from '../../redis/redis.service';
@@ -95,14 +96,25 @@ export class EstimationSessionResolver {
     return await this.estimationService.removeMember(args.id, args.memberId);
   }
 
+  @Mutation(() => Boolean)
+  async pingSessionMember(@Args() args: PingMemberArgs): Promise<boolean> {
+    const member = await this.estimationService.getMember(args.id, args.memberId);
+    if (!member || member.secret !== args.secret) {
+      throw new EstimationError(404, 'memberNotFound', 'Member not found or invalid secret');
+    }
+    await this.estimationService.updateMemberLastSeen(args.id, member.id);
+    return true;
+  }
+
   @Subscription(() => EstimationSession, {
     filter: (payload) => !!payload[SessionNotify.sessionUpdated],
   })
   async sessionUpdated(@Args() args: GetSessionArgs, @Context() ctx: any) {
     const session = await this.checkSessionAccess(args, ctx);
     return mapAsync(this.redisService.pubSub.asyncIterator(sessionRoomName(session.id)), (payload) => {
-      console.log('map', payload);
-      payload[SessionNotify.sessionUpdated] = clearSession(payload[SessionNotify.sessionUpdated], ctx.isAdmin);
+      if (payload[SessionNotify.sessionUpdated]) {
+        payload[SessionNotify.sessionUpdated] = clearSession(payload[SessionNotify.sessionUpdated], ctx.isAdmin);
+      }
       return payload;
     });
   }

@@ -10,6 +10,11 @@ button, .btn {
   text-align: center;
   text-decoration: none;
 
+  &.secondary {
+    background-color: $note-color;
+    padding: 0.5rem;
+  }
+
   &:hover {
     background-color: $accent-color-hover;
     color: white;
@@ -22,6 +27,8 @@ button, .btn {
   &:disabled {
     background-color: $border-color;
   }
+
+
 
 }
 

@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { RedisService } from './redis.service';
-import { ConfigModule } from '@nestjs/config';
 import { RedisModule } from './redis.module';
+import { TestConfigModule } from '../../test/test-utils';
 
 describe('RedisService', () => {
   let service: RedisService;
@@ -9,7 +9,7 @@ describe('RedisService', () => {
 
   beforeEach(async () => {
     module = await Test.createTestingModule({
-      imports: [RedisModule, ConfigModule.forRoot({ envFilePath: '.env_test' })],
+      imports: [TestConfigModule, RedisModule],
     }).compile();
 
     service = module.get<RedisService>(RedisService);

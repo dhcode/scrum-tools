@@ -140,10 +140,7 @@ export class RedisService implements OnApplicationShutdown {
   }
 
   async deleteAll() {
-    const keys = await this.redis.keys('*');
-    if (keys.length) {
-      await this.redis.del(...keys);
-    }
+    await this.redis.flushdb();
   }
 }
 

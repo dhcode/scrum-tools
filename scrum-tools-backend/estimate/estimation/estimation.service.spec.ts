@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { EstimationService, sessionRoomName } from './estimation.service';
-import { ConfigModule } from '@nestjs/config';
 import { RedisService } from '../../redis/redis.service';
 import { RedisModule } from '../../redis/redis.module';
+import { TestConfigModule } from '../../../test/test-utils';
 
 describe('EstimationService', () => {
   let module: TestingModule;
@@ -11,7 +11,7 @@ describe('EstimationService', () => {
 
   beforeEach(async () => {
     module = await Test.createTestingModule({
-      imports: [RedisModule, ConfigModule.forRoot({ envFilePath: '.env_test' })],
+      imports: [TestConfigModule, RedisModule],
       providers: [EstimationService],
     }).compile();
 

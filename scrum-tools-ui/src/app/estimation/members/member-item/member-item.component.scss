@@ -1,0 +1,28 @@
+@import "src/styles/colors";
+
+.name {
+  padding: 1rem;
+  cursor: pointer;
+  &:hover {
+    background-color: $border-color;
+  }
+}
+
+.lastSeen {
+  margin: 1rem;
+  font-size: 0.8em;
+}
+
+.status {
+  margin-right:0.5rem;
+  color: $note-color;
+  &.online {
+    color: $online-color;
+  }
+  &.pending {
+    color: $pending-color;
+  }
+  &.offline {
+    color: $error-color;
+  }
+}

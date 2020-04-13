@@ -5,6 +5,7 @@ import { TimeAgoComponent } from './time-ago/time-ago.component';
 import { FormErrorsComponent } from './form-errors/form-errors.component';
 import { FormErrorMsgDirective } from './form-errors/form-error-msg.directive';
 import { ErrorMessageComponent } from './error-message/error-message.component';
+import { ConfirmButtonComponent } from './confirm-button/confirm-button.component';
 
 @NgModule({
   imports: [CommonModule],
@@ -14,6 +15,7 @@ import { ErrorMessageComponent } from './error-message/error-message.component';
     FormErrorsComponent,
     FormErrorMsgDirective,
     ErrorMessageComponent,
+    ConfirmButtonComponent,
   ],
   exports: [
     LoadingSpinnerComponent,
@@ -21,6 +23,7 @@ import { ErrorMessageComponent } from './error-message/error-message.component';
     FormErrorsComponent,
     FormErrorMsgDirective,
     ErrorMessageComponent,
+    ConfirmButtonComponent,
   ],
 })
 export class SharedModule {}

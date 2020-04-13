@@ -11,6 +11,8 @@ import { SessionCreateViewComponent } from './session-create-view/session-create
 import { SharedModule } from '../shared/shared.module';
 import { MembersComponent } from './members/members.component';
 import { OnlineStatusPipe } from './members/online-status.pipe';
+import { JoinFormComponent } from './session-member-view/join-form/join-form.component';
+import { MemberItemComponent } from './members/member-item/member-item.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +23,8 @@ import { OnlineStatusPipe } from './members/online-status.pipe';
     SessionCreateViewComponent,
     MembersComponent,
     OnlineStatusPipe,
+    JoinFormComponent,
+    MemberItemComponent,
   ],
   imports: [CommonModule, ReactiveFormsModule, EstimationRoutingModule, SharedModule],
 })

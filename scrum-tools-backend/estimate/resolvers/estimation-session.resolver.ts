@@ -13,6 +13,7 @@ import {
   JoinSessionArgs,
   LeaveSessionArgs,
   PingMemberArgs,
+  RemoveMemberArgs,
   UpdateSessionArgs,
 } from '../models/estimation-requests';
 import { RedisService } from '../../redis/redis.service';
@@ -104,6 +105,15 @@ export class EstimationSessionResolver {
     }
     await this.estimationService.updateMemberLastSeen(args.id, member.id);
     return true;
+  }
+
+  @Mutation(() => Boolean)
+  async removeMember(@Args() args: RemoveMemberArgs): Promise<boolean> {
+    const session = await this.estimationSession({ ...args, joinSecret: '' });
+    if (!session.adminSecret) {
+      throw new EstimationError(403, 'updateNotAllowed', 'Session id or admin secret are not correct.');
+    }
+    return this.estimationService.removeMember(args.id, args.memberId);
   }
 
   @Subscription(() => EstimationSession, {

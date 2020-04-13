@@ -5,33 +5,9 @@
   grid-gap: 1rem;
   grid-template-columns: 1fr;
 
-  .member {
+  app-member-item {
+    display: block;
     background: $note-bg-color;
-
-    .name {
-      padding: 1rem;
-      border-bottom: $border-color;
-    }
-
-    .lastSeen {
-      padding: 1rem;
-      font-size: 0.8em;
-    }
-
-    .status {
-      margin-right:0.5rem;
-      color: $note-color;
-      &.online {
-        color: $online-color;
-      }
-      &.pending {
-        color: $pending-color;
-      }
-      &.offline {
-        color: $error-color;
-      }
-    }
-
 
   }
 

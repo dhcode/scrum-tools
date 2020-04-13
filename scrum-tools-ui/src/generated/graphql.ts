@@ -56,6 +56,7 @@ export type Mutation = {
   joinSession: EstimationMember;
   leaveSession: Scalars['Boolean'];
   pingSessionMember: Scalars['Boolean'];
+  removeMember: Scalars['Boolean'];
 };
 
 export type MutationCreateSessionArgs = {
@@ -89,6 +90,12 @@ export type MutationPingSessionMemberArgs = {
   id: Scalars['ID'];
   memberId: Scalars['String'];
   secret: Scalars['String'];
+};
+
+export type MutationRemoveMemberArgs = {
+  id: Scalars['ID'];
+  memberId: Scalars['String'];
+  adminSecret: Scalars['String'];
 };
 
 export type Query = {
@@ -193,6 +200,14 @@ export type PingSessionMemberMutationVariables = {
 };
 
 export type PingSessionMemberMutation = Pick<Mutation, 'pingSessionMember'>;
+
+export type RemoveMemberMutationVariables = {
+  id: Scalars['ID'];
+  memberId: Scalars['String'];
+  adminSecret: Scalars['String'];
+};
+
+export type RemoveMemberMutation = Pick<Mutation, 'removeMember'>;
 
 export type EstimationSessionOverviewQueryVariables = {
   id: Scalars['ID'];
@@ -351,6 +366,18 @@ export class PingSessionMemberGQL extends Apollo.Mutation<
   PingSessionMemberMutationVariables
 > {
   document = PingSessionMemberDocument;
+}
+export const RemoveMemberDocument = gql`
+  mutation removeMember($id: ID!, $memberId: String!, $adminSecret: String!) {
+    removeMember(id: $id, memberId: $memberId, adminSecret: $adminSecret)
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class RemoveMemberGQL extends Apollo.Mutation<RemoveMemberMutation, RemoveMemberMutationVariables> {
+  document = RemoveMemberDocument;
 }
 export const EstimationSessionOverviewDocument = gql`
   query estimationSessionOverview($id: ID!, $joinSecret: String!, $adminSecret: String) {

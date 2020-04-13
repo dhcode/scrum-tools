@@ -90,6 +90,7 @@ type Mutation {
   ): EstimationMember!
   leaveSession(id: ID!, memberId: String!, secret: String!): Boolean!
   pingSessionMember(id: ID!, memberId: String!, secret: String!): Boolean!
+  removeMember(id: ID!, memberId: String!, adminSecret: String!): Boolean!
 }
 
 type Subscription {

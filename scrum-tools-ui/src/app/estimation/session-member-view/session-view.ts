@@ -33,13 +33,24 @@ export abstract class SessionView {
       this.estimationService
         .getSession(sessionInfo)
         .pipe(trackLoading(this.loadingState))
-        .subscribe((s) => (this.session = s)),
+        .subscribe((s) => {
+          this.session = s;
+          if (this.onSessionUpdated) {
+            this.onSessionUpdated(this.session);
+          }
+        }),
     );
 
     this.sub.add(
       this.estimationService.subscribeSessionWithDetails(sessionInfo).subscribe((change) => {
         console.log('change', change);
+        if (this.onSessionChange) {
+          this.onSessionChange(change);
+        }
       }),
     );
   }
+
+  onSessionUpdated?(session: SessionDetails) {}
+  onSessionChange?(change) {}
 }

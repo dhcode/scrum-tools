@@ -1,0 +1,19 @@
+<div class="member">
+  <div class="name" (click)="toggleEdit()">
+    <span class="status" [ngClass]="member.lastSeenAt | onlineStatus" [title]="member.lastSeenAt | date: 'medium'">⬤</span>
+    {{member.name}}
+  </div>
+
+  <ng-container *ngIf="isDetailed">
+
+    <div class="lastSeen">
+      seen
+      <app-time-ago [date]="member.lastSeenAt"></app-time-ago>
+    </div>
+
+    <div class="buttons" *ngIf="isAdmin">
+      <app-confirm-button class="secondary small" (confirmed)="remove.next()">Remove</app-confirm-button>
+    </div>
+  </ng-container>
+
+</div>

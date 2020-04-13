@@ -7,7 +7,7 @@ import { formatDistanceToNow } from 'date-fns';
   templateUrl: './time-ago.component.html',
 })
 export class TimeAgoComponent implements OnInit, OnDestroy {
-  @Input() date: Date;
+  @Input() date: Date | string;
 
   output = '-';
 

@@ -9,6 +9,8 @@
 
   </div>
 
+  <app-join-form *ngIf="!memberId" [session]="session" (joined)="initMember()"></app-join-form>
+
 
 </ng-container>
 

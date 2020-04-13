@@ -1,0 +1,7 @@
+<button *ngIf="!isConfirming" class="btn full" [class.secondary]="secondary"  [class.small]="small" type="button" (click)="ask()">
+  <ng-content></ng-content>
+</button>
+<div *ngIf="isConfirming" class="confirmCancel">
+  <button type="button" class="btn secondary" [class.small]="small" (click)="cancel()">Cancel</button>
+  <button type="button" class="btn danger" [class.small]="small" (click)="confirm()">Confirm</button>
+</div>

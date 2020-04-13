@@ -151,3 +151,22 @@ export class PingMemberArgs {
   @MaxLength(16)
   secret: string;
 }
+
+@ArgsType()
+export class RemoveMemberArgs {
+  @Field(() => ID)
+  @IsString()
+  @MaxLength(10)
+  @IsNotEmpty()
+  id: string;
+
+  @Field()
+  @IsString()
+  @MaxLength(10)
+  memberId: string;
+
+  @Field()
+  @IsString()
+  @MaxLength(16)
+  adminSecret: string;
+}

@@ -10,9 +10,20 @@ button, .btn {
   text-align: center;
   text-decoration: none;
 
+  &.full {
+    width: 100%;
+  }
+
+  &.small {
+    padding: 0.5rem;
+  }
+
   &.secondary {
     background-color: $note-color;
-    padding: 0.5rem;
+  }
+
+  &.danger {
+    background-color: $error-color;
   }
 
   &:hover {

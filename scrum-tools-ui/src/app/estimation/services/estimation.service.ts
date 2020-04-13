@@ -87,7 +87,7 @@ export class EstimationService {
       if ('joinSecret' in session) {
         existing.joinSecret = session.joinSecret;
       }
-      if ('joinSecret' in session) {
+      if ('adminSecret' in session) {
         existing.adminSecret = session.adminSecret;
       }
       if ('memberId' in session) {

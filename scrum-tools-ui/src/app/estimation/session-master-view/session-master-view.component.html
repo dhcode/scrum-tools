@@ -2,6 +2,7 @@
   <div class="basic-info">
     <h2>{{session.name}}</h2>
     <pre>{{session.description}}</pre>
+    <pre>{{joinLink}}</pre>
   </div>
 
   <div class="topic-setup">
@@ -9,7 +10,10 @@
   </div>
 
   <div class="members">
-    <app-members [members]="session.members" [votes]="session.activeTopic?.votes" [isAdmin]="true"></app-members>
+    <app-members [members]="session.members"
+                 [votes]="session.activeTopic?.votes"
+                 [isAdmin]="true"
+                 (remove)="removeMember($event)"></app-members>
 
   </div>
 

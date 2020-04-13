@@ -5,14 +5,22 @@
     <pre>{{joinLink}}</pre>
   </div>
 
-  <div class="topic-setup">
-    Topic setup
+  <div *ngIf="session.activeTopic" class="topic-info">
+    <h3>Current topic</h3>
+    <h4>{{session.activeTopic.name}}</h4>
+    <p>Started <app-time-ago [date]="session.activeTopic.startedAt"></app-time-ago></p>
+
+    <button type="button" class="btn">End vote</button>
+  </div>
+
+  <div *ngIf="!session.activeTopic">
+    <h3>Create new topic</h3>
+    <app-create-topic-form [session]="session"></app-create-topic-form>
   </div>
 
   <div class="members">
-    <app-members [members]="session.members"
-                 [votes]="session.activeTopic?.votes"
-                 [isAdmin]="true"
+    <h3>Members</h3>
+    <app-members [session]="session"
                  (remove)="removeMember($event)"></app-members>
 
   </div>

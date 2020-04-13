@@ -1,0 +1,12 @@
+<form [formGroup]="form" (submit)="createTopic()">
+  <label for="name">Topic name</label>
+  <input id="name" type="text" [formControl]="name">
+  <app-form-errors [control]="name">
+    <ng-template appFormErrorMsg="required" let-info>A topic name is required</ng-template>
+  </app-form-errors>
+
+  <button [disabled]="form.invalid || loadingState.loading">Create topic</button>
+
+  <app-loading-spinner *ngIf="loadingState.loading"></app-loading-spinner>
+  <app-error-message *ngIf="loadingState.error" [error]="loadingState.error"></app-error-message>
+</form>

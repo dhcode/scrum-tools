@@ -46,7 +46,7 @@ export type EstimationTopic = {
   description: Scalars['String'];
   options: Array<Scalars['Int']>;
   startedAt: Scalars['DateTime'];
-  endedAt: Scalars['DateTime'];
+  endedAt?: Maybe<Scalars['DateTime']>;
   votes?: Maybe<Array<TopicVote>>;
 };
 
@@ -57,6 +57,7 @@ export type Mutation = {
   leaveSession: Scalars['Boolean'];
   pingSessionMember: Scalars['Boolean'];
   removeMember: Scalars['Boolean'];
+  createTopic: EstimationTopic;
 };
 
 export type MutationCreateSessionArgs = {
@@ -96,6 +97,13 @@ export type MutationRemoveMemberArgs = {
   id: Scalars['ID'];
   memberId: Scalars['String'];
   adminSecret: Scalars['String'];
+};
+
+export type MutationCreateTopicArgs = {
+  id: Scalars['ID'];
+  adminSecret: Scalars['String'];
+  name: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
 };
 
 export type Query = {
@@ -208,6 +216,14 @@ export type RemoveMemberMutationVariables = {
 };
 
 export type RemoveMemberMutation = Pick<Mutation, 'removeMember'>;
+
+export type CreateTopicMutationVariables = {
+  id: Scalars['ID'];
+  adminSecret: Scalars['String'];
+  name: Scalars['String'];
+};
+
+export type CreateTopicMutation = { createTopic: Pick<EstimationTopic, 'id' | 'sessionId' | 'name' | 'options'> };
 
 export type EstimationSessionOverviewQueryVariables = {
   id: Scalars['ID'];
@@ -378,6 +394,23 @@ export const RemoveMemberDocument = gql`
 })
 export class RemoveMemberGQL extends Apollo.Mutation<RemoveMemberMutation, RemoveMemberMutationVariables> {
   document = RemoveMemberDocument;
+}
+export const CreateTopicDocument = gql`
+  mutation createTopic($id: ID!, $adminSecret: String!, $name: String!) {
+    createTopic(id: $id, adminSecret: $adminSecret, name: $name) {
+      id
+      sessionId
+      name
+      options
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class CreateTopicGQL extends Apollo.Mutation<CreateTopicMutation, CreateTopicMutationVariables> {
+  document = CreateTopicDocument;
 }
 export const EstimationSessionOverviewDocument = gql`
   query estimationSessionOverview($id: ID!, $joinSecret: String!, $adminSecret: String) {

@@ -1,5 +1,5 @@
-<div *ngIf="members?.length" class="members">
-  <app-member-item *ngFor="let member of members; trackBy: byId"
+<div *ngIf="session.members?.length" class="members">
+  <app-member-item *ngFor="let member of session.members; trackBy: byId"
                    [member]="member"
                    [vote]="getVote(member)"
                    [isAdmin]="isAdmin"
@@ -7,6 +7,6 @@
                    (remove)="remove.next(member)"></app-member-item>
 </div>
 
-<div *ngIf="!members?.length" class="primary-note">
+<div *ngIf="!session.members?.length" class="primary-note">
   No members have joined this session.
 </div>

@@ -170,3 +170,28 @@ export class RemoveMemberArgs {
   @MaxLength(16)
   adminSecret: string;
 }
+
+@ArgsType()
+export class CreateTopicArgs {
+  @Field(() => ID)
+  @IsString()
+  @MaxLength(10)
+  @IsNotEmpty()
+  id: string;
+
+  @Field()
+  @IsString()
+  @MaxLength(16)
+  adminSecret: string;
+
+  @Field()
+  @IsString()
+  @MaxLength(100)
+  name: string;
+
+  @Field({ nullable: true })
+  @IsString()
+  @IsOptional()
+  @MaxLength(10)
+  description: string;
+}

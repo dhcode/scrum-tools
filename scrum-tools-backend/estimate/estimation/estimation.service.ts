@@ -184,7 +184,12 @@ export class EstimationService {
 
   async getActiveTopic(sessionId: string): Promise<EstimationTopic> {
     const topicId = await this.redis.redis.lindex(Store.topics + ':' + sessionId, 0);
+    if (!topicId) {
+      return undefined;
+    }
+    console.log('topicId', topicId);
     const topic = await this.getTopic(topicId);
+    console.log('topic', topic);
     if (topic && topic.endedAt === null) {
       return topic;
     }

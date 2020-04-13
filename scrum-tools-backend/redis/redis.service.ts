@@ -26,11 +26,15 @@ export class RedisService implements OnApplicationShutdown {
       const redisUri = configService.get<string>('REDIS_URI');
       const redis = new IORedis(redisUri, { lazyConnect: true });
       return new Promise((resolve, reject) => {
-        redis.once('error', (err) => {
+        const errHandler = (err) => {
           redis.disconnect();
           reject(err);
+        };
+        redis.once('error', errHandler);
+        redis.connect(() => {
+          redis.off('error', errHandler);
+          resolve(redis);
         });
-        redis.connect(() => resolve(redis));
       });
     },
     inject: [ConfigService],
@@ -161,7 +165,8 @@ export function hgetallTransformer(result: string[]) {
     }
     const data = {};
     for (let i = 0; i < result.length; i += 2) {
-      data[result[i]] = eJsonParse(result[i + 1]);
+      const value = result[i + 1];
+      data[result[i]] = value.length ? eJsonParse(value) : undefined;
     }
     return data;
   }

@@ -4,8 +4,13 @@
     <pre>{{session.description}}</pre>
   </div>
 
+  <div *ngIf="session.activeTopic" class="topic-info">
+    <h3>Current topic</h3>
+    <h4>{{session.activeTopic.name}}</h4>
+  </div>
+
   <div class="members">
-    <app-members [members]="session.members" [votes]="session.activeTopic?.votes"></app-members>
+    <app-members [session]="session"></app-members>
 
   </div>
 

@@ -23,3 +23,12 @@ mutation pingSessionMember($id: ID!, $memberId: String!, $secret: String!) {
 mutation removeMember($id: ID!, $memberId: String!, $adminSecret: String!) {
   removeMember(id: $id, memberId: $memberId, adminSecret: $adminSecret)
 }
+
+mutation createTopic($id: ID!, $adminSecret: String!, $name: String!) {
+  createTopic(id: $id, adminSecret: $adminSecret, name: $name) {
+    id
+    sessionId
+    name
+    options
+  }
+}

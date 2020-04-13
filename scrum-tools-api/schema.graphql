@@ -29,7 +29,7 @@ type EstimationTopic {
   description: String!
   options: [Int!]!
   startedAt: DateTime!
-  endedAt: DateTime!
+  endedAt: DateTime
   votes: [TopicVote!]
 }
 
@@ -91,6 +91,7 @@ type Mutation {
   leaveSession(id: ID!, memberId: String!, secret: String!): Boolean!
   pingSessionMember(id: ID!, memberId: String!, secret: String!): Boolean!
   removeMember(id: ID!, memberId: String!, adminSecret: String!): Boolean!
+  createTopic(id: ID!, adminSecret: String!, name: String!, description: String): EstimationTopic!
 }
 
 type Subscription {

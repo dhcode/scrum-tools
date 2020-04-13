@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { SessionDetailMember, SessionDetailTopicVote } from '../services/estimation.service';
+import { SessionDetailMember, SessionDetails, SessionDetailTopicVote } from '../services/estimation.service';
 import { timer } from 'rxjs';
 
 @Component({
@@ -8,14 +8,15 @@ import { timer } from 'rxjs';
   styleUrls: ['./members.component.scss'],
 })
 export class MembersComponent implements OnInit {
-  @Input() members: SessionDetailMember[] = [];
-  @Input() votes: SessionDetailTopicVote[] = [];
-  @Input() isAdmin: boolean;
+  @Input() session: SessionDetails;
   isDetailed = false;
 
   @Output() remove = new EventEmitter<SessionDetailMember>();
 
   constructor() {}
+  get isAdmin(): boolean {
+    return !!this.session.adminSecret;
+  }
 
   ngOnInit(): void {}
 
@@ -24,6 +25,6 @@ export class MembersComponent implements OnInit {
   }
 
   getVote(member: SessionDetailMember) {
-    return this.votes?.find((v) => v.memberId === member.id);
+    return this.session.activeTopic?.votes?.find((v) => v.memberId === member.id);
   }
 }

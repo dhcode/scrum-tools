@@ -53,7 +53,7 @@ export class EstimationTopic {
   @Field()
   startedAt: Date;
 
-  @Field()
+  @Field({ nullable: true })
   endedAt: Date;
 
   @Field(() => [TopicVote], { nullable: true })

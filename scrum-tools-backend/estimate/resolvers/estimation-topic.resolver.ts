@@ -1,6 +1,7 @@
-import { Parent, ResolveField, Resolver } from '@nestjs/graphql';
-import { EstimationTopic, TopicVote } from '../models/estimation-models';
+import { Args, Mutation, Parent, ResolveField, Resolver } from '@nestjs/graphql';
+import { EstimationSession, EstimationTopic, TopicVote } from '../models/estimation-models';
 import { EstimationService } from '../estimation/estimation.service';
+import { CreateSessionArgs, CreateTopicArgs } from '../models/estimation-requests';
 
 @Resolver(() => EstimationTopic)
 export class EstimationTopicResolver {

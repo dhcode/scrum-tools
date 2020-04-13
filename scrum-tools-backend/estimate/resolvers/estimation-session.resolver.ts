@@ -9,6 +9,7 @@ import {
 import { EstimationService, SessionNotify, sessionRoomName } from '../estimation/estimation.service';
 import {
   CreateSessionArgs,
+  CreateTopicArgs,
   GetSessionArgs,
   JoinSessionArgs,
   LeaveSessionArgs,
@@ -114,6 +115,15 @@ export class EstimationSessionResolver {
       throw new EstimationError(403, 'updateNotAllowed', 'Session id or admin secret are not correct.');
     }
     return this.estimationService.removeMember(args.id, args.memberId);
+  }
+
+  @Mutation(() => EstimationTopic)
+  async createTopic(@Args() args: CreateTopicArgs) {
+    const session = await this.estimationSession({ ...args, joinSecret: '' });
+    if (!session.adminSecret) {
+      throw new EstimationError(403, 'notAllowed', 'Session id or admin secret are not correct.');
+    }
+    return this.estimationService.createTopic(session, args.name, args.description ?? '');
   }
 
   @Subscription(() => EstimationSession, {

@@ -13,6 +13,7 @@ import { MembersComponent } from './members/members.component';
 import { OnlineStatusPipe } from './members/online-status.pipe';
 import { JoinFormComponent } from './session-member-view/join-form/join-form.component';
 import { MemberItemComponent } from './members/member-item/member-item.component';
+import { CreateTopicFormComponent } from './session-master-view/create-topic-form/create-topic-form.component';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { MemberItemComponent } from './members/member-item/member-item.component
     OnlineStatusPipe,
     JoinFormComponent,
     MemberItemComponent,
+    CreateTopicFormComponent,
   ],
   imports: [CommonModule, ReactiveFormsModule, EstimationRoutingModule, SharedModule],
 })

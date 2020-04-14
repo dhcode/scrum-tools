@@ -1,3 +1,13 @@
 .topic-setup {
   margin: 1rem 0;
 }
+
+.basic-info {
+  display: grid;
+  grid-template-columns: 1fr auto;
+
+  .qrCode {
+    grid-column: 2/3;
+    grid-row: 1/3;
+  }
+}

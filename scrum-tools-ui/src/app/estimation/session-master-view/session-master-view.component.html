@@ -1,8 +1,11 @@
 <ng-container *ngIf="loadingState.loaded && session">
   <div class="basic-info">
-    <h2>{{session.name}}</h2>
-    <pre>{{session.description}}</pre>
-    <pre>{{joinLink}}</pre>
+    <div>
+      <h2>{{session.name}}</h2>
+      <pre>{{session.description}}</pre>
+      <pre>{{joinLink}}</pre>
+    </div>
+    <img class="qrCode" [src]="qrCode" alt="QR Code to join">
   </div>
 
   <div *ngIf="currentTopic">
@@ -18,6 +21,12 @@
 
   <app-members [session]="session"
                (remove)="removeMember($event)"></app-members>
+
+  <br>
+  <p class="small">
+    Sessions expire 90 days after inactivity. Within this time frame you should save the master link in your bookmarks, to gain access to this session later.
+  </p>
+  <button type="button" class="btn secondary small" (click)="copyMasterUrl()">Copy master link</button>
 
 
 </ng-container>

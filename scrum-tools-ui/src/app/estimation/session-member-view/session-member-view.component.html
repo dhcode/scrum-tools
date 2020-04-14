@@ -4,7 +4,7 @@
     <pre>{{session.description}}</pre>
   </div>
 
-  <app-topic-result [topic]="currentTopic"></app-topic-result>
+  <app-topic-result *ngIf="currentTopic" [topic]="currentTopic"></app-topic-result>
 
   <div *ngIf="session.activeTopic" class="topic-info">
 

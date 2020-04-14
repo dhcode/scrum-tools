@@ -66,6 +66,10 @@ export class SessionMasterViewComponent extends SessionView implements OnInit, O
       .subscribe();
   }
 
+  copyMemberUrl() {
+    this.clipboard.copy(this.joinLink);
+  }
+
   copyMasterUrl() {
     const { id, joinSecret, adminSecret } = this.session;
     this.clipboard.copy(

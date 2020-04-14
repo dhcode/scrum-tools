@@ -3,7 +3,10 @@
     <div>
       <h2>{{session.name}}</h2>
       <pre>{{session.description}}</pre>
-      <pre>{{joinLink}}</pre>
+      <div class="join-link">
+        {{joinLink}}
+        <button class="btn small secondary" (click)="copyMemberUrl()">Copy</button>
+      </div>
     </div>
     <img class="qrCode" [src]="qrCode" alt="QR Code to join">
   </div>

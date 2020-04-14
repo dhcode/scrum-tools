@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { SessionDetailMember, SessionDetails, SessionDetailTopicVote } from '../services/estimation.service';
-import { timer } from 'rxjs';
+import { SessionDetailsFragment, SessionMemberFragment } from '../../../generated/graphql';
 
 @Component({
   selector: 'app-members',
@@ -8,10 +7,10 @@ import { timer } from 'rxjs';
   styleUrls: ['./members.component.scss'],
 })
 export class MembersComponent implements OnInit {
-  @Input() session: SessionDetails;
+  @Input() session: SessionDetailsFragment;
   isDetailed = false;
 
-  @Output() remove = new EventEmitter<SessionDetailMember>();
+  @Output() remove = new EventEmitter<SessionMemberFragment>();
 
   constructor() {}
   get isAdmin(): boolean {
@@ -20,11 +19,7 @@ export class MembersComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  byId(member: SessionDetailMember) {
+  byId(member: SessionMemberFragment) {
     return member.id;
-  }
-
-  getVote(member: SessionDetailMember) {
-    return this.session.activeTopic?.votes?.find((v) => v.memberId === member.id);
   }
 }

@@ -1,7 +1,8 @@
+<h3>{{session.members.length || ''}} Members</h3>
+
 <div *ngIf="session.members?.length" class="members">
   <app-member-item *ngFor="let member of session.members; trackBy: byId"
                    [member]="member"
-                   [vote]="getVote(member)"
                    [isAdmin]="isAdmin"
                    [(isDetailed)]="isDetailed"
                    (remove)="remove.next(member)"></app-member-item>

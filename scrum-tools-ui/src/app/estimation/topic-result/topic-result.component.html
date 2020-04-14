@@ -1,0 +1,20 @@
+<h3>Current topic</h3>
+<h4>{{topic.name}}</h4>
+<p>Started <app-time-ago [date]="topic.startedAt"></app-time-ago></p>
+
+<p *ngIf="showOptions">
+  Options:
+  <span *ngFor="let opt of topic.options" class="option">{{opt ? opt : '?'}}</span>
+</p>
+
+<h4>{{topic.votes.length}} votes received</h4>
+
+<div class="votes">
+  <div *ngFor="let vote of topic.votes" class="vote">
+    <div class="name">{{vote.memberName}}</div>
+    <div class="result" *ngIf="vote.vote === null">✓</div>
+    <div class="result" *ngIf="vote.vote !== null">
+      {{vote.vote ? vote.vote : '?'}}
+    </div>
+  </div>
+</div>

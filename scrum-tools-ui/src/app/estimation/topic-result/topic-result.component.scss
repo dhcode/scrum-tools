@@ -1,0 +1,45 @@
+@import "src/styles/colors";
+
+.option {
+  display: inline-block;
+  padding: 1rem;
+  background: $note-bg-color;
+  margin: 1rem;
+}
+
+.votes {
+  margin: 1rem 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 1rem;
+
+  .vote {
+    display: block;
+    background: $note-bg-color;
+
+    .name {
+      text-align: center;
+      padding: 1rem;
+    }
+
+    .result {
+      text-align: center;
+      font-size: 2em;
+      padding: 0 1rem 1rem 1rem;
+    }
+
+  }
+
+}
+
+@media only screen and (min-width: 400px) {
+  .votes {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media only screen and (min-width: 800px) {
+  .votes {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}

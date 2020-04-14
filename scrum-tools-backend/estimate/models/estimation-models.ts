@@ -95,21 +95,3 @@ export class EstimationSession {
   @Field(() => [EstimationMember], { nullable: true })
   members?: EstimationMember[];
 }
-
-@ObjectType()
-export class VoteAddedInfo {
-  @Field()
-  votedAt: Date;
-
-  @Field(() => EstimationMember)
-  member: EstimationMember;
-}
-
-@ObjectType()
-export class VoteEndedInfo {
-  @Field(() => EstimationTopic)
-  topic: EstimationTopic;
-
-  @Field(() => [TopicVote])
-  votes: TopicVote[];
-}

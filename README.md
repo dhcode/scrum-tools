@@ -46,6 +46,11 @@ Open the UI: http://localhost:4200
 
 Open the API Explorer: http://localhost:3000/graphql
 
+## Issues
+
+* XSS vulnerability: Secrets are stored in the local store of the browser. TODO: Implement cookie based session management.
+
+
 ## License
 
   [MIT licensed](LICENSE)

@@ -1,15 +1,11 @@
 import { Args, Context, Int, Mutation, Parent, Query, ResolveField, Resolver, Subscription } from '@nestjs/graphql';
-import {
-  EstimationMember,
-  EstimationSession,
-  EstimationTopic,
-  VoteAddedInfo,
-  VoteEndedInfo,
-} from '../models/estimation-models';
+import { EstimationMember, EstimationSession, EstimationTopic, TopicVote } from '../models/estimation-models';
 import { EstimationService, SessionNotify, sessionRoomName } from '../estimation/estimation.service';
 import {
+  AddVoteArgs,
   CreateSessionArgs,
   CreateTopicArgs,
+  EndVoteArgs,
   GetSessionArgs,
   JoinSessionArgs,
   LeaveSessionArgs,
@@ -18,9 +14,8 @@ import {
   UpdateSessionArgs,
 } from '../models/estimation-requests';
 import { RedisService } from '../../redis/redis.service';
-import { clearMember, clearSession } from '../models/model.utils';
+import { clearMember, clearSession, clearVote } from '../models/model.utils';
 import { EstimationError } from '../models/estimation-error';
-import { mapAsync } from '../../shared/utils';
 
 @Resolver(() => EstimationSession)
 export class EstimationSessionResolver {
@@ -43,12 +38,6 @@ export class EstimationSessionResolver {
         `Session with id '${args.id}' was not found or invalid secret provided.`,
       );
     }
-  }
-
-  private async checkSessionAccess(args: GetSessionArgs, ctx: any): Promise<EstimationSession> {
-    const session = await this.estimationSession(args);
-    ctx.isAdmin = !!session.adminSecret;
-    return session;
   }
 
   @ResolveField(() => EstimationTopic)
@@ -126,25 +115,48 @@ export class EstimationSessionResolver {
     return this.estimationService.createTopic(session, args.name, args.description ?? '');
   }
 
+  @Mutation(() => EstimationTopic)
+  async endVote(@Args() args: EndVoteArgs) {
+    const session = await this.estimationSession({ ...args, joinSecret: '' });
+    if (!session.adminSecret) {
+      throw new EstimationError(403, 'notAllowed', 'Session id or admin secret are not correct.');
+    }
+    const topic = await this.estimationService.getTopic(args.topicId);
+    if (!topic) {
+      throw new EstimationError(404, 'topicNotFound', 'Topic not found.');
+    }
+    return this.estimationService.endVote(args.topicId);
+  }
+
+  @Mutation(() => TopicVote)
+  async addVote(@Args() args: AddVoteArgs) {
+    const member = await this.estimationService.getMember(args.id, args.memberId);
+    if (!member || member.secret !== args.secret) {
+      throw new EstimationError(404, 'memberNotFound', 'Member not found or invalid secret');
+    }
+    const topic = await this.estimationService.getActiveTopic(args.id);
+    if (!topic) {
+      throw new EstimationError(404, 'topicNotFound', 'No active topic found in session');
+    }
+    return this.estimationService.addVote(topic, member, args.vote);
+  }
+
   @Subscription(() => EstimationSession, {
     filter: (payload) => !!payload[SessionNotify.sessionUpdated],
+    resolve: (payload, args1, ctx) => clearSession(payload[SessionNotify.sessionUpdated], ctx.isAdmin),
   })
   async sessionUpdated(@Args() args: GetSessionArgs, @Context() ctx: any) {
-    const session = await this.checkSessionAccess(args, ctx);
-    return mapAsync(this.redisService.pubSub.asyncIterator(sessionRoomName(session.id)), (payload) => {
-      if (payload[SessionNotify.sessionUpdated]) {
-        payload[SessionNotify.sessionUpdated] = clearSession(payload[SessionNotify.sessionUpdated], ctx.isAdmin);
-      }
-      return payload;
-    });
+    const session = await this.estimationSession(args);
+    ctx.isAdmin = !!session.adminSecret;
+    return this.redisService.pubSub.asyncIterator(sessionRoomName(session.id));
   }
 
   @Subscription(() => EstimationMember, {
     filter: (payload) => !!payload[SessionNotify.memberUpdated],
     resolve: (payload) => clearMember(payload[SessionNotify.memberUpdated]),
   })
-  async memberUpdated(@Args() args: GetSessionArgs, @Context() ctx: any) {
-    const session = await this.checkSessionAccess(args, ctx);
+  async memberUpdated(@Args() args: GetSessionArgs) {
+    const session = await this.estimationSession(args);
     return this.redisService.pubSub.asyncIterator(sessionRoomName(session.id));
   }
 
@@ -152,8 +164,8 @@ export class EstimationSessionResolver {
     filter: (payload) => !!payload[SessionNotify.memberAdded],
     resolve: (payload) => clearMember(payload[SessionNotify.memberAdded]),
   })
-  async memberAdded(@Args() args: GetSessionArgs, @Context() ctx: any) {
-    const session = await this.checkSessionAccess(args, ctx);
+  async memberAdded(@Args() args: GetSessionArgs) {
+    const session = await this.estimationSession(args);
     return this.redisService.pubSub.asyncIterator(sessionRoomName(session.id));
   }
 
@@ -161,35 +173,33 @@ export class EstimationSessionResolver {
     filter: (payload) => !!payload[SessionNotify.memberRemoved],
     resolve: (payload) => clearMember(payload[SessionNotify.memberRemoved]),
   })
-  async memberRemoved(@Args() args: GetSessionArgs, @Context() ctx: any) {
-    const session = await this.checkSessionAccess(args, ctx);
+  async memberRemoved(@Args() args: GetSessionArgs) {
+    const session = await this.estimationSession(args);
     return this.redisService.pubSub.asyncIterator(sessionRoomName(session.id));
   }
 
   @Subscription(() => EstimationTopic, {
     filter: (payload) => !!payload[SessionNotify.topicCreated],
-    resolve: (payload) => payload[SessionNotify.topicCreated],
   })
-  async topicCreated(@Args() args: GetSessionArgs, @Context() ctx: any) {
-    const session = await this.checkSessionAccess(args, ctx);
+  async topicCreated(@Args() args: GetSessionArgs) {
+    const session = await this.estimationSession(args);
     return this.redisService.pubSub.asyncIterator(sessionRoomName(session.id));
   }
 
-  @Subscription(() => VoteAddedInfo, {
+  @Subscription(() => TopicVote, {
     filter: (payload) => !!payload[SessionNotify.voteAdded],
-    resolve: (payload) => payload[SessionNotify.voteAdded],
+    resolve: (payload) => clearVote(payload[SessionNotify.voteAdded]),
   })
-  async voteAdded(@Args() args: GetSessionArgs, @Context() ctx: any) {
-    const session = await this.checkSessionAccess(args, ctx);
+  async voteAdded(@Args() args: GetSessionArgs) {
+    const session = await this.estimationSession(args);
     return this.redisService.pubSub.asyncIterator(sessionRoomName(session.id));
   }
 
-  @Subscription(() => VoteEndedInfo, {
+  @Subscription(() => EstimationTopic, {
     filter: (payload) => !!payload[SessionNotify.voteEnded],
-    resolve: (payload) => payload[SessionNotify.voteEnded],
   })
-  async voteEnded(@Args() args: GetSessionArgs, @Context() ctx: any) {
-    const session = await this.checkSessionAccess(args, ctx);
+  async voteEnded(@Args() args: GetSessionArgs) {
+    const session = await this.estimationSession(args);
     return this.redisService.pubSub.asyncIterator(sessionRoomName(session.id));
   }
 }

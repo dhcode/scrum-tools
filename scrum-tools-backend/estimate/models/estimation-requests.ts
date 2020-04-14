@@ -124,11 +124,13 @@ export class LeaveSessionArgs {
 
   @Field()
   @IsString()
+  @IsNotEmpty()
   @MaxLength(10)
   memberId: string;
 
   @Field()
   @IsString()
+  @IsNotEmpty()
   @MaxLength(16)
   secret: string;
 }
@@ -143,11 +145,13 @@ export class PingMemberArgs {
 
   @Field()
   @IsString()
+  @IsNotEmpty()
   @MaxLength(10)
   memberId: string;
 
   @Field()
   @IsString()
+  @IsNotEmpty()
   @MaxLength(16)
   secret: string;
 }
@@ -162,11 +166,13 @@ export class RemoveMemberArgs {
 
   @Field()
   @IsString()
+  @IsNotEmpty()
   @MaxLength(10)
   memberId: string;
 
   @Field()
   @IsString()
+  @IsNotEmpty()
   @MaxLength(16)
   adminSecret: string;
 }
@@ -194,4 +200,48 @@ export class CreateTopicArgs {
   @IsOptional()
   @MaxLength(10)
   description: string;
+}
+
+@ArgsType()
+export class EndVoteArgs {
+  @Field(() => ID)
+  @IsString()
+  @MaxLength(10)
+  @IsNotEmpty()
+  id: string;
+
+  @Field()
+  @IsString()
+  @MaxLength(16)
+  adminSecret: string;
+
+  @Field()
+  @IsString()
+  @MaxLength(10)
+  topicId: string;
+}
+
+@ArgsType()
+export class AddVoteArgs {
+  @Field(() => ID)
+  @IsString()
+  @MaxLength(10)
+  @IsNotEmpty()
+  id: string;
+
+  @Field()
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(10)
+  memberId: string;
+
+  @Field()
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(16)
+  secret: string;
+
+  @Field(() => Int)
+  @IsInt()
+  vote: number;
 }

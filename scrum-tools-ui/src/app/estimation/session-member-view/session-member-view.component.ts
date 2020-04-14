@@ -1,11 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { SessionView } from './session-view';
 import { ActivatedRoute } from '@angular/router';
-import { EstimationService, SessionDetails, SessionInfo } from '../services/estimation.service';
-import { PingSessionMemberGQL } from '../../../generated/graphql';
+import { EstimationService, SessionInfo } from '../services/estimation.service';
+import { AddVoteGQL, PingSessionMemberGQL, SessionDetailsFragment } from '../../../generated/graphql';
 import { Subscription, timer } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { FormControl, Validators } from '@angular/forms';
+import { LoadingState, trackLoading } from '../../shared/loading.util';
 
 @Component({
   selector: 'app-session-member-view',
@@ -15,10 +16,20 @@ import { FormControl, Validators } from '@angular/forms';
 export class SessionMemberViewComponent extends SessionView implements OnInit, OnDestroy {
   timerSub: Subscription;
   memberId: string = null;
+  memberSecret: string = null;
 
   memberName = new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]);
 
-  constructor(route: ActivatedRoute, estimationService: EstimationService, private ping: PingSessionMemberGQL) {
+  voteLoadingState = new LoadingState();
+
+  vote: number;
+
+  constructor(
+    route: ActivatedRoute,
+    estimationService: EstimationService,
+    private ping: PingSessionMemberGQL,
+    private addVoteGQL: AddVoteGQL,
+  ) {
     super(route, estimationService);
   }
 
@@ -42,7 +53,7 @@ export class SessionMemberViewComponent extends SessionView implements OnInit, O
     }
   }
 
-  onSessionUpdated(session: SessionDetails) {
+  onSessionUpdated(session: SessionDetailsFragment) {
     this.initMember();
   }
 
@@ -51,9 +62,11 @@ export class SessionMemberViewComponent extends SessionView implements OnInit, O
     const foundMember = this.session.members.find((m) => m.id === knownSession.memberId);
     if (foundMember && this.memberId !== knownSession.memberId) {
       this.memberId = knownSession.memberId;
+      this.memberSecret = knownSession.secret;
       this.setupPingTimer(knownSession);
     } else if (!foundMember) {
       this.memberId = null;
+      this.memberSecret = null;
     }
   }
 
@@ -70,5 +83,14 @@ export class SessionMemberViewComponent extends SessionView implements OnInit, O
   ngOnDestroy(): void {
     super.ngOnDestroy();
     this.timerSub?.unsubscribe?.();
+  }
+
+  addVote(vote: number) {
+    this.addVoteGQL
+      .mutate({ id: this.sessionId, memberId: this.memberId, secret: this.memberSecret, vote: vote })
+      .pipe(trackLoading(this.voteLoadingState))
+      .subscribe(() => {
+        this.vote = vote;
+      });
   }
 }

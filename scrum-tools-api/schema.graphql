@@ -47,16 +47,6 @@ type EstimationSession {
   members: [EstimationMember!]
 }
 
-type VoteAddedInfo {
-  votedAt: DateTime!
-  member: EstimationMember!
-}
-
-type VoteEndedInfo {
-  topic: EstimationTopic!
-  votes: [TopicVote!]!
-}
-
 type Query {
   estimationSession(id: ID!, joinSecret: String!, adminSecret: String): EstimationSession!
 }
@@ -92,6 +82,8 @@ type Mutation {
   pingSessionMember(id: ID!, memberId: String!, secret: String!): Boolean!
   removeMember(id: ID!, memberId: String!, adminSecret: String!): Boolean!
   createTopic(id: ID!, adminSecret: String!, name: String!, description: String): EstimationTopic!
+  endVote(id: ID!, adminSecret: String!, topicId: String!): EstimationTopic!
+  addVote(id: ID!, memberId: String!, secret: String!, vote: Int!): TopicVote!
 }
 
 type Subscription {
@@ -100,6 +92,6 @@ type Subscription {
   memberAdded(id: ID!, joinSecret: String!, adminSecret: String): EstimationMember!
   memberRemoved(id: ID!, joinSecret: String!, adminSecret: String): EstimationMember!
   topicCreated(id: ID!, joinSecret: String!, adminSecret: String): EstimationTopic!
-  voteAdded(id: ID!, joinSecret: String!, adminSecret: String): VoteAddedInfo!
-  voteEnded(id: ID!, joinSecret: String!, adminSecret: String): VoteEndedInfo!
+  voteAdded(id: ID!, joinSecret: String!, adminSecret: String): TopicVote!
+  voteEnded(id: ID!, joinSecret: String!, adminSecret: String): EstimationTopic!
 }

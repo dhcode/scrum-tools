@@ -32,7 +32,7 @@ button, .btn {
     text-decoration: none;
   }
 
-  &:active {
+  &:active,&.active {
     background-color: $accent-color-active;
   }
   &:disabled {

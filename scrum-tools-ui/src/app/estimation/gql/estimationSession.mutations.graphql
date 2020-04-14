@@ -32,3 +32,25 @@ mutation createTopic($id: ID!, $adminSecret: String!, $name: String!) {
     options
   }
 }
+
+mutation addVote($id: ID!, $memberId: String!, $secret: String!, $vote: Int!) {
+  addVote(id: $id, memberId: $memberId, secret: $secret, vote: $vote) {
+    memberId
+    memberName
+    vote
+    votedAt
+  }
+}
+
+mutation endVote($id: ID!, $adminSecret: String!, $topicId: String!) {
+  endVote(id: $id, adminSecret: $adminSecret, topicId: $topicId) {
+    id
+    endedAt
+    votes {
+      memberId
+      memberName
+      vote
+      votedAt
+    }
+  }
+}

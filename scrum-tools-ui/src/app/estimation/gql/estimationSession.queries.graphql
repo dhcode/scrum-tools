@@ -1,57 +1,69 @@
 query estimationSessionOverview($id: ID!, $joinSecret: String!, $adminSecret: String) {
   estimationSession(id: $id, joinSecret: $joinSecret, adminSecret: $adminSecret) {
-    id
-    name
-    description
-    joinSecret
-    adminSecret
-    modifiedAt
-    activeTopic {
-      id
-    }
-    members {
-      id
-    }
+    ...SessionOverview
   }
 }
 
 query estimationSessionDetails($id: ID!, $joinSecret: String!, $adminSecret: String) {
   estimationSession(id: $id, joinSecret: $joinSecret, adminSecret: $adminSecret) {
-    id
-    name
-    description
-    joinSecret
-    adminSecret
-    modifiedAt
-    activeTopic {
-      id
-      description
-      name
-      startedAt
-      endedAt
-      options
-      votes {
-        memberId
-        memberName
-        vote
-        votedAt
-      }
-    }
-    members {
-      id
-      lastSeenAt
-      name
-    }
-    topics(limit: 10) {
-      id
-      description
-      name
-      startedAt
-      endedAt
-      votes {
-        memberName
-        vote
-      }
-    }
+    ...SessionDetails
   }
+}
+
+fragment SessionOverview on EstimationSession {
+  id
+  name
+  description
+  joinSecret
+  adminSecret
+  modifiedAt
+  activeTopic {
+    id
+  }
+  members {
+    id
+  }
+}
+
+fragment SessionDetails on EstimationSession {
+  id
+  name
+  description
+  joinSecret
+  adminSecret
+  modifiedAt
+  activeTopic {
+    ...TopicDetails
+  }
+  members {
+    ...SessionMember
+  }
+  topics(limit: 1) {
+    ...TopicDetails
+  }
+}
+
+fragment SessionMember on EstimationMember {
+  id
+  lastSeenAt
+  name
+}
+
+fragment TopicDetails on EstimationTopic {
+  id
+  description
+  name
+  startedAt
+  endedAt
+  options
+  votes {
+    ...TopicVoteDetails
+  }
+}
+
+fragment TopicVoteDetails on TopicVote {
+  memberId
+  memberName
+  vote
+  votedAt
 }

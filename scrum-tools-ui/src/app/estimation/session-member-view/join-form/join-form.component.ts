@@ -1,7 +1,7 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewContainerRef } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { LoadingState, trackLoading } from '../../../shared/loading.util';
-import { JoinSessionGQL } from '../../../../generated/graphql';
-import { EstimationService, SessionDetails } from '../../services/estimation.service';
+import { JoinSessionGQL, SessionDetailsFragment } from '../../../../generated/graphql';
+import { EstimationService } from '../../services/estimation.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
@@ -10,7 +10,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
   styleUrls: ['./join-form.component.scss'],
 })
 export class JoinFormComponent implements OnInit {
-  @Input() session: SessionDetails;
+  @Input() session: SessionDetailsFragment;
   @Output() joined = new EventEmitter();
 
   name = new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]);

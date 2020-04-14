@@ -5,12 +5,10 @@
     <pre>{{joinLink}}</pre>
   </div>
 
-  <div *ngIf="session.activeTopic" class="topic-info">
-    <h3>Current topic</h3>
-    <h4>{{session.activeTopic.name}}</h4>
-    <p>Started <app-time-ago [date]="session.activeTopic.startedAt"></app-time-ago></p>
+  <div *ngIf="currentTopic">
+    <app-topic-result [topic]="currentTopic" [showOptions]="true"></app-topic-result>
 
-    <button type="button" class="btn">End vote</button>
+    <button *ngIf="session.activeTopic" type="button" class="btn" (click)="endVote()">End vote</button>
   </div>
 
   <div *ngIf="!session.activeTopic">
@@ -18,12 +16,8 @@
     <app-create-topic-form [session]="session"></app-create-topic-form>
   </div>
 
-  <div class="members">
-    <h3>Members</h3>
-    <app-members [session]="session"
-                 (remove)="removeMember($event)"></app-members>
-
-  </div>
+  <app-members [session]="session"
+               (remove)="removeMember($event)"></app-members>
 
 
 </ng-container>

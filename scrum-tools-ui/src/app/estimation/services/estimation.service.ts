@@ -1,18 +1,15 @@
 import { Inject, Injectable } from '@angular/core';
 import { LOCAL_STORAGE, StorageService } from 'ngx-webstorage-service';
 import {
-  EstimationMember,
   EstimationSessionDetailsGQL,
-  EstimationSessionDetailsQuery,
   EstimationSessionOverviewGQL,
-  EstimationSessionOverviewQuery,
-  EstimationTopic,
   MemberAddedGQL,
   MemberRemovedGQL,
   MemberUpdatedGQL,
+  SessionDetailsFragment,
+  SessionOverviewFragment,
   SessionUpdatedGQL,
   TopicCreatedGQL,
-  TopicVote,
   VoteAddedGQL,
   VoteEndedGQL,
 } from '../../../generated/graphql';
@@ -29,15 +26,6 @@ export interface SessionInfo {
   memberId?: string;
   secret?: string;
 }
-
-export type SessionOverview = EstimationSessionOverviewQuery['estimationSession'];
-export type SessionDetails = EstimationSessionDetailsQuery['estimationSession'];
-export type SessionDetailMember = Pick<EstimationMember, 'id' | 'lastSeenAt' | 'name'>;
-export type SessionDetailTopic = Pick<
-  EstimationTopic,
-  'id' | 'description' | 'name' | 'startedAt' | 'endedAt' | 'options'
->;
-export type SessionDetailTopicVote = Pick<TopicVote, 'memberId' | 'memberName' | 'vote' | 'votedAt'>;
 
 const knownSessionsKey = 'knownSessions';
 
@@ -125,7 +113,7 @@ export class EstimationService {
     return this.getKnownSessions().find((s) => s.id === sessionId);
   }
 
-  getSession(sessionInfo: SessionInfo): Observable<SessionDetails> {
+  getSession(sessionInfo: SessionInfo): Observable<SessionDetailsFragment> {
     return this.sessionDetailsGQL.watch(sessionInfo).valueChanges.pipe(map((change) => change.data.estimationSession));
   }
 
@@ -137,7 +125,7 @@ export class EstimationService {
     }
   }
 
-  private watchSessionForOverview(info: SessionInfo): Observable<SessionOverview> {
+  private watchSessionForOverview(info: SessionInfo): Observable<SessionOverviewFragment> {
     return this.sessionOverviewGQL.watch(info).valueChanges.pipe(
       map((data) => data.data.estimationSession),
       catchError((err) => {
@@ -151,12 +139,14 @@ export class EstimationService {
     );
   }
 
-  getSessionsOverview(): Observable<SessionOverview[]> {
+  getSessionsOverview(): Observable<SessionOverviewFragment[]> {
     return this.sessionOverview$;
   }
 
-  private subscribeSessionsChanges(source: Observable<SessionOverview[]>): Observable<SessionOverview[]> {
-    return new Observable<SessionOverview[]>((subscriber) => {
+  private subscribeSessionsChanges(
+    source: Observable<SessionOverviewFragment[]>,
+  ): Observable<SessionOverviewFragment[]> {
+    return new Observable<SessionOverviewFragment[]>((subscriber) => {
       const sessionSubs: Record<string, Subscription> = {};
       console.log('subscribeSessions subscribe');
 
@@ -176,7 +166,7 @@ export class EstimationService {
     }).pipe(share());
   }
 
-  private subscribeSessions(sessions: SessionOverview[], sessionSubs: Record<string, Subscription>) {
+  private subscribeSessions(sessions: SessionOverviewFragment[], sessionSubs: Record<string, Subscription>) {
     const existingIds = new Set(Object.keys(sessionSubs));
     for (const session of sessions) {
       if (existingIds.has(session.id)) {

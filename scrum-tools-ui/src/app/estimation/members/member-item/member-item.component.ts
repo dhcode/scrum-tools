@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { SessionDetailMember, SessionDetailTopicVote } from '../../services/estimation.service';
-import { timer } from 'rxjs';
+import { SessionMemberFragment } from '../../../../generated/graphql';
 
 @Component({
   selector: 'app-member-item',
@@ -8,9 +7,8 @@ import { timer } from 'rxjs';
   styleUrls: ['./member-item.component.scss'],
 })
 export class MemberItemComponent implements OnInit {
-  @Input() member: SessionDetailMember;
+  @Input() member: SessionMemberFragment;
   @Input() isAdmin: boolean;
-  @Input() vote: SessionDetailTopicVote;
   @Input() isDetailed = false;
   @Output() isDetailedChange = new EventEmitter<boolean>();
   @Output() remove = new EventEmitter();

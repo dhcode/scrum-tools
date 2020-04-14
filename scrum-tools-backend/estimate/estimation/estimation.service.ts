@@ -187,9 +187,7 @@ export class EstimationService {
     if (!topicId) {
       return undefined;
     }
-    console.log('topicId', topicId);
     const topic = await this.getTopic(topicId);
-    console.log('topic', topic);
     if (topic && topic.endedAt === null) {
       return topic;
     }
@@ -209,24 +207,20 @@ export class EstimationService {
     return this.redis.getObjectById(Store.topic, topicId);
   }
 
-  async addVote(topicId: string, member: EstimationMember, voteValue: number): Promise<TopicVote> {
+  async addVote(topic: EstimationTopic, member: EstimationMember, voteValue: number): Promise<TopicVote> {
     const vote: TopicVote = {
       memberId: member.id,
       memberName: member.name,
       vote: voteValue,
       votedAt: new Date(),
     };
-    const topic = await this.getTopic(topicId);
     if (topic.endedAt) {
       throw new EstimationError(400, 'voteEnded', 'Vote could not be added, because voting has ended.');
     }
-    await this.redis.updateListEntry(Store.vote, topicId, member.id, vote);
-    await this.redis.updateExpiry(Store.vote, topicId, expireSeconds);
+    await this.redis.updateListEntry(Store.vote, topic.id, member.id, vote);
+    await this.redis.updateExpiry(Store.vote, topic.id, expireSeconds);
 
-    this.notifySession(topic.sessionId, SessionNotify.voteAdded, {
-      member: member,
-      votedAt: vote.votedAt,
-    });
+    this.notifySession(topic.sessionId, SessionNotify.voteAdded, vote);
 
     return vote;
   }
@@ -235,7 +229,7 @@ export class EstimationService {
     return await this.redis.getListEntries(Store.vote, topicId);
   }
 
-  async endVote(topicId: string): Promise<void> {
+  async endVote(topicId: string): Promise<EstimationTopic> {
     const topic = await this.getTopic(topicId);
     if (topic.endedAt) {
       throw new EstimationError(400, 'voteEnded', 'Voting has already ended.');
@@ -248,9 +242,7 @@ export class EstimationService {
 
     await this.updateEstimationSession(topic.sessionId, {});
 
-    this.notifySession(topic.sessionId, SessionNotify.voteEnded, {
-      topic: topic,
-      votes: await this.getVotes(topic.id),
-    });
+    this.notifySession(topic.sessionId, SessionNotify.voteEnded, topic);
+    return topic;
   }
 }

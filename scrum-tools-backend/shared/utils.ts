@@ -47,3 +47,17 @@ export function mapAsync<T, R>(iterator: AsyncIterator<T>, mapFn: (item: T) => R
     },
   };
 }
+
+export function mapAsyncField<T, I>(
+  iterator: AsyncIterator<T>,
+  field: string,
+  mapFn: (item: I, ...args) => I,
+  ...args
+): AsyncIterator<T> {
+  return mapAsync(iterator, (item) => {
+    if (item && field in item) {
+      item[field] = mapFn(item[field], ...args);
+    }
+    return item;
+  });
+}

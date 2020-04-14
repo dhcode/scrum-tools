@@ -58,6 +58,8 @@ export type Mutation = {
   pingSessionMember: Scalars['Boolean'];
   removeMember: Scalars['Boolean'];
   createTopic: EstimationTopic;
+  endVote: EstimationTopic;
+  addVote: TopicVote;
 };
 
 export type MutationCreateSessionArgs = {
@@ -106,6 +108,19 @@ export type MutationCreateTopicArgs = {
   description?: Maybe<Scalars['String']>;
 };
 
+export type MutationEndVoteArgs = {
+  id: Scalars['ID'];
+  adminSecret: Scalars['String'];
+  topicId: Scalars['String'];
+};
+
+export type MutationAddVoteArgs = {
+  id: Scalars['ID'];
+  memberId: Scalars['String'];
+  secret: Scalars['String'];
+  vote: Scalars['Int'];
+};
+
 export type Query = {
   estimationSession: EstimationSession;
 };
@@ -122,8 +137,8 @@ export type Subscription = {
   memberAdded: EstimationMember;
   memberRemoved: EstimationMember;
   topicCreated: EstimationTopic;
-  voteAdded: VoteAddedInfo;
-  voteEnded: VoteEndedInfo;
+  voteAdded: TopicVote;
+  voteEnded: EstimationTopic;
 };
 
 export type SubscriptionSessionUpdatedArgs = {
@@ -175,16 +190,6 @@ export type TopicVote = {
   vote?: Maybe<Scalars['Int']>;
 };
 
-export type VoteAddedInfo = {
-  votedAt: Scalars['DateTime'];
-  member: EstimationMember;
-};
-
-export type VoteEndedInfo = {
-  topic: EstimationTopic;
-  votes: Array<TopicVote>;
-};
-
 export type CreateSessionMutationVariables = {
   name: Scalars['String'];
 };
@@ -225,18 +230,34 @@ export type CreateTopicMutationVariables = {
 
 export type CreateTopicMutation = { createTopic: Pick<EstimationTopic, 'id' | 'sessionId' | 'name' | 'options'> };
 
+export type AddVoteMutationVariables = {
+  id: Scalars['ID'];
+  memberId: Scalars['String'];
+  secret: Scalars['String'];
+  vote: Scalars['Int'];
+};
+
+export type AddVoteMutation = { addVote: Pick<TopicVote, 'memberId' | 'memberName' | 'vote' | 'votedAt'> };
+
+export type EndVoteMutationVariables = {
+  id: Scalars['ID'];
+  adminSecret: Scalars['String'];
+  topicId: Scalars['String'];
+};
+
+export type EndVoteMutation = {
+  endVote: Pick<EstimationTopic, 'id' | 'endedAt'> & {
+    votes?: Maybe<Array<Pick<TopicVote, 'memberId' | 'memberName' | 'vote' | 'votedAt'>>>;
+  };
+};
+
 export type EstimationSessionOverviewQueryVariables = {
   id: Scalars['ID'];
   joinSecret: Scalars['String'];
   adminSecret?: Maybe<Scalars['String']>;
 };
 
-export type EstimationSessionOverviewQuery = {
-  estimationSession: Pick<
-    EstimationSession,
-    'id' | 'name' | 'description' | 'joinSecret' | 'adminSecret' | 'modifiedAt'
-  > & { activeTopic?: Maybe<Pick<EstimationTopic, 'id'>>; members?: Maybe<Array<Pick<EstimationMember, 'id'>>> };
-};
+export type EstimationSessionOverviewQuery = { estimationSession: SessionOverviewFragment };
 
 export type EstimationSessionDetailsQueryVariables = {
   id: Scalars['ID'];
@@ -244,26 +265,30 @@ export type EstimationSessionDetailsQueryVariables = {
   adminSecret?: Maybe<Scalars['String']>;
 };
 
-export type EstimationSessionDetailsQuery = {
-  estimationSession: Pick<
-    EstimationSession,
-    'id' | 'name' | 'description' | 'joinSecret' | 'adminSecret' | 'modifiedAt'
-  > & {
-    activeTopic?: Maybe<
-      Pick<EstimationTopic, 'id' | 'description' | 'name' | 'startedAt' | 'endedAt' | 'options'> & {
-        votes?: Maybe<Array<Pick<TopicVote, 'memberId' | 'memberName' | 'vote' | 'votedAt'>>>;
-      }
-    >;
-    members?: Maybe<Array<Pick<EstimationMember, 'id' | 'lastSeenAt' | 'name'>>>;
-    topics?: Maybe<
-      Array<
-        Pick<EstimationTopic, 'id' | 'description' | 'name' | 'startedAt' | 'endedAt'> & {
-          votes?: Maybe<Array<Pick<TopicVote, 'memberName' | 'vote'>>>;
-        }
-      >
-    >;
-  };
+export type EstimationSessionDetailsQuery = { estimationSession: SessionDetailsFragment };
+
+export type SessionOverviewFragment = Pick<
+  EstimationSession,
+  'id' | 'name' | 'description' | 'joinSecret' | 'adminSecret' | 'modifiedAt'
+> & { activeTopic?: Maybe<Pick<EstimationTopic, 'id'>>; members?: Maybe<Array<Pick<EstimationMember, 'id'>>> };
+
+export type SessionDetailsFragment = Pick<
+  EstimationSession,
+  'id' | 'name' | 'description' | 'joinSecret' | 'adminSecret' | 'modifiedAt'
+> & {
+  activeTopic?: Maybe<TopicDetailsFragment>;
+  members?: Maybe<Array<SessionMemberFragment>>;
+  topics?: Maybe<Array<TopicDetailsFragment>>;
 };
+
+export type SessionMemberFragment = Pick<EstimationMember, 'id' | 'lastSeenAt' | 'name'>;
+
+export type TopicDetailsFragment = Pick<
+  EstimationTopic,
+  'id' | 'description' | 'name' | 'startedAt' | 'endedAt' | 'options'
+> & { votes?: Maybe<Array<TopicVoteDetailsFragment>> };
+
+export type TopicVoteDetailsFragment = Pick<TopicVote, 'memberId' | 'memberName' | 'vote' | 'votedAt'>;
 
 export type SessionUpdatedSubscriptionVariables = {
   id: Scalars['ID'];
@@ -277,7 +302,8 @@ export type SessionUpdatedSubscription = {
     'id' | 'name' | 'description' | 'joinSecret' | 'adminSecret' | 'modifiedAt'
   > & {
     activeTopic?: Maybe<Pick<EstimationTopic, 'id'>>;
-    members?: Maybe<Array<Pick<EstimationMember, 'id' | 'name' | 'lastSeenAt'>>>;
+    members?: Maybe<Array<SessionMemberFragment>>;
+    topics?: Maybe<Array<TopicDetailsFragment>>;
   };
 };
 
@@ -286,54 +312,109 @@ export type MemberAddedSubscriptionVariables = {
   joinSecret: Scalars['String'];
 };
 
-export type MemberAddedSubscription = { memberAdded: Pick<EstimationMember, 'id' | 'lastSeenAt' | 'name'> };
+export type MemberAddedSubscription = { memberAdded: SessionMemberFragment };
 
 export type MemberUpdatedSubscriptionVariables = {
   id: Scalars['ID'];
   joinSecret: Scalars['String'];
 };
 
-export type MemberUpdatedSubscription = { memberUpdated: Pick<EstimationMember, 'id' | 'lastSeenAt' | 'name'> };
+export type MemberUpdatedSubscription = { memberUpdated: SessionMemberFragment };
 
 export type MemberRemovedSubscriptionVariables = {
   id: Scalars['ID'];
   joinSecret: Scalars['String'];
 };
 
-export type MemberRemovedSubscription = { memberRemoved: Pick<EstimationMember, 'id' | 'lastSeenAt' | 'name'> };
+export type MemberRemovedSubscription = { memberRemoved: SessionMemberFragment };
 
 export type TopicCreatedSubscriptionVariables = {
   id: Scalars['ID'];
   joinSecret: Scalars['String'];
 };
 
-export type TopicCreatedSubscription = {
-  topicCreated: Pick<EstimationTopic, 'id' | 'name' | 'description' | 'startedAt' | 'endedAt' | 'options'> & {
-    votes?: Maybe<Array<Pick<TopicVote, 'memberId' | 'memberName' | 'vote' | 'votedAt'>>>;
-  };
-};
+export type TopicCreatedSubscription = { topicCreated: TopicDetailsFragment };
 
 export type VoteAddedSubscriptionVariables = {
   id: Scalars['ID'];
   joinSecret: Scalars['String'];
 };
 
-export type VoteAddedSubscription = {
-  voteAdded: Pick<VoteAddedInfo, 'votedAt'> & { member: Pick<EstimationMember, 'id'> };
-};
+export type VoteAddedSubscription = { voteAdded: TopicVoteDetailsFragment };
 
 export type VoteEndedSubscriptionVariables = {
   id: Scalars['ID'];
   joinSecret: Scalars['String'];
 };
 
-export type VoteEndedSubscription = {
-  voteEnded: {
-    topic: Pick<EstimationTopic, 'id' | 'endedAt'>;
-    votes: Array<Pick<TopicVote, 'memberId' | 'memberName' | 'vote' | 'votedAt'>>;
-  };
-};
+export type VoteEndedSubscription = { voteEnded: TopicDetailsFragment };
 
+export const SessionOverviewFragmentDoc = gql`
+  fragment SessionOverview on EstimationSession {
+    id
+    name
+    description
+    joinSecret
+    adminSecret
+    modifiedAt
+    activeTopic {
+      id
+    }
+    members {
+      id
+    }
+  }
+`;
+export const TopicVoteDetailsFragmentDoc = gql`
+  fragment TopicVoteDetails on TopicVote {
+    memberId
+    memberName
+    vote
+    votedAt
+  }
+`;
+export const TopicDetailsFragmentDoc = gql`
+  fragment TopicDetails on EstimationTopic {
+    id
+    description
+    name
+    startedAt
+    endedAt
+    options
+    votes {
+      ...TopicVoteDetails
+    }
+  }
+  ${TopicVoteDetailsFragmentDoc}
+`;
+export const SessionMemberFragmentDoc = gql`
+  fragment SessionMember on EstimationMember {
+    id
+    lastSeenAt
+    name
+  }
+`;
+export const SessionDetailsFragmentDoc = gql`
+  fragment SessionDetails on EstimationSession {
+    id
+    name
+    description
+    joinSecret
+    adminSecret
+    modifiedAt
+    activeTopic {
+      ...TopicDetails
+    }
+    members {
+      ...SessionMember
+    }
+    topics(limit: 1) {
+      ...TopicDetails
+    }
+  }
+  ${TopicDetailsFragmentDoc}
+  ${SessionMemberFragmentDoc}
+`;
 export const CreateSessionDocument = gql`
   mutation createSession($name: String!) {
     createSession(name: $name, description: "") {
@@ -412,23 +493,51 @@ export const CreateTopicDocument = gql`
 export class CreateTopicGQL extends Apollo.Mutation<CreateTopicMutation, CreateTopicMutationVariables> {
   document = CreateTopicDocument;
 }
-export const EstimationSessionOverviewDocument = gql`
-  query estimationSessionOverview($id: ID!, $joinSecret: String!, $adminSecret: String) {
-    estimationSession(id: $id, joinSecret: $joinSecret, adminSecret: $adminSecret) {
+export const AddVoteDocument = gql`
+  mutation addVote($id: ID!, $memberId: String!, $secret: String!, $vote: Int!) {
+    addVote(id: $id, memberId: $memberId, secret: $secret, vote: $vote) {
+      memberId
+      memberName
+      vote
+      votedAt
+    }
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class AddVoteGQL extends Apollo.Mutation<AddVoteMutation, AddVoteMutationVariables> {
+  document = AddVoteDocument;
+}
+export const EndVoteDocument = gql`
+  mutation endVote($id: ID!, $adminSecret: String!, $topicId: String!) {
+    endVote(id: $id, adminSecret: $adminSecret, topicId: $topicId) {
       id
-      name
-      description
-      joinSecret
-      adminSecret
-      modifiedAt
-      activeTopic {
-        id
-      }
-      members {
-        id
+      endedAt
+      votes {
+        memberId
+        memberName
+        vote
+        votedAt
       }
     }
   }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class EndVoteGQL extends Apollo.Mutation<EndVoteMutation, EndVoteMutationVariables> {
+  document = EndVoteDocument;
+}
+export const EstimationSessionOverviewDocument = gql`
+  query estimationSessionOverview($id: ID!, $joinSecret: String!, $adminSecret: String) {
+    estimationSession(id: $id, joinSecret: $joinSecret, adminSecret: $adminSecret) {
+      ...SessionOverview
+    }
+  }
+  ${SessionOverviewFragmentDoc}
 `;
 
 @Injectable({
@@ -443,44 +552,10 @@ export class EstimationSessionOverviewGQL extends Apollo.Query<
 export const EstimationSessionDetailsDocument = gql`
   query estimationSessionDetails($id: ID!, $joinSecret: String!, $adminSecret: String) {
     estimationSession(id: $id, joinSecret: $joinSecret, adminSecret: $adminSecret) {
-      id
-      name
-      description
-      joinSecret
-      adminSecret
-      modifiedAt
-      activeTopic {
-        id
-        description
-        name
-        startedAt
-        endedAt
-        options
-        votes {
-          memberId
-          memberName
-          vote
-          votedAt
-        }
-      }
-      members {
-        id
-        lastSeenAt
-        name
-      }
-      topics(limit: 10) {
-        id
-        description
-        name
-        startedAt
-        endedAt
-        votes {
-          memberName
-          vote
-        }
-      }
+      ...SessionDetails
     }
   }
+  ${SessionDetailsFragmentDoc}
 `;
 
 @Injectable({
@@ -505,12 +580,15 @@ export const SessionUpdatedDocument = gql`
         id
       }
       members {
-        id
-        name
-        lastSeenAt
+        ...SessionMember
+      }
+      topics(limit: 1) {
+        ...TopicDetails
       }
     }
   }
+  ${SessionMemberFragmentDoc}
+  ${TopicDetailsFragmentDoc}
 `;
 
 @Injectable({
@@ -525,11 +603,10 @@ export class SessionUpdatedGQL extends Apollo.Subscription<
 export const MemberAddedDocument = gql`
   subscription memberAdded($id: ID!, $joinSecret: String!) {
     memberAdded(id: $id, joinSecret: $joinSecret) {
-      id
-      lastSeenAt
-      name
+      ...SessionMember
     }
   }
+  ${SessionMemberFragmentDoc}
 `;
 
 @Injectable({
@@ -541,11 +618,10 @@ export class MemberAddedGQL extends Apollo.Subscription<MemberAddedSubscription,
 export const MemberUpdatedDocument = gql`
   subscription memberUpdated($id: ID!, $joinSecret: String!) {
     memberUpdated(id: $id, joinSecret: $joinSecret) {
-      id
-      lastSeenAt
-      name
+      ...SessionMember
     }
   }
+  ${SessionMemberFragmentDoc}
 `;
 
 @Injectable({
@@ -560,11 +636,10 @@ export class MemberUpdatedGQL extends Apollo.Subscription<
 export const MemberRemovedDocument = gql`
   subscription memberRemoved($id: ID!, $joinSecret: String!) {
     memberRemoved(id: $id, joinSecret: $joinSecret) {
-      id
-      lastSeenAt
-      name
+      ...SessionMember
     }
   }
+  ${SessionMemberFragmentDoc}
 `;
 
 @Injectable({
@@ -579,20 +654,10 @@ export class MemberRemovedGQL extends Apollo.Subscription<
 export const TopicCreatedDocument = gql`
   subscription topicCreated($id: ID!, $joinSecret: String!) {
     topicCreated(id: $id, joinSecret: $joinSecret) {
-      id
-      name
-      description
-      startedAt
-      endedAt
-      options
-      votes {
-        memberId
-        memberName
-        vote
-        votedAt
-      }
+      ...TopicDetails
     }
   }
+  ${TopicDetailsFragmentDoc}
 `;
 
 @Injectable({
@@ -604,12 +669,10 @@ export class TopicCreatedGQL extends Apollo.Subscription<TopicCreatedSubscriptio
 export const VoteAddedDocument = gql`
   subscription voteAdded($id: ID!, $joinSecret: String!) {
     voteAdded(id: $id, joinSecret: $joinSecret) {
-      member {
-        id
-      }
-      votedAt
+      ...TopicVoteDetails
     }
   }
+  ${TopicVoteDetailsFragmentDoc}
 `;
 
 @Injectable({
@@ -621,18 +684,10 @@ export class VoteAddedGQL extends Apollo.Subscription<VoteAddedSubscription, Vot
 export const VoteEndedDocument = gql`
   subscription voteEnded($id: ID!, $joinSecret: String!) {
     voteEnded(id: $id, joinSecret: $joinSecret) {
-      topic {
-        id
-        endedAt
-      }
-      votes {
-        memberId
-        memberName
-        vote
-        votedAt
-      }
+      ...TopicDetails
     }
   }
+  ${TopicDetailsFragmentDoc}
 `;
 
 @Injectable({

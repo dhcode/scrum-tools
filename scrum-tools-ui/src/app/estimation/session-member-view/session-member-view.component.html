@@ -4,9 +4,21 @@
     <pre>{{session.description}}</pre>
   </div>
 
+  <app-topic-result [topic]="currentTopic"></app-topic-result>
+
   <div *ngIf="session.activeTopic" class="topic-info">
-    <h3>Current topic</h3>
-    <h4>{{session.activeTopic.name}}</h4>
+
+    <div class="vote-options" *ngIf="!voteLoadingState.loading">
+      <button *ngFor="let opt of session.activeTopic.options"
+              type="button"
+              class="btn"
+              [disabled]="!memberId"
+              [class.active]="vote === opt"
+              (click)="addVote(opt)">{{opt ? opt : '?'}}</button>
+    </div>
+    <app-loading-spinner *ngIf="voteLoadingState.loading"></app-loading-spinner>
+    <app-error-message *ngIf="voteLoadingState.error" [error]="voteLoadingState.error"></app-error-message>
+
   </div>
 
   <div class="members">

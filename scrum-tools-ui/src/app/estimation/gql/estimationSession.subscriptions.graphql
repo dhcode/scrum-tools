@@ -10,74 +10,46 @@ subscription sessionUpdated($id: ID!, $joinSecret: String!, $adminSecret: String
       id
     }
     members {
-      id
-      name
-      lastSeenAt
+      ...SessionMember
+    }
+    topics(limit: 1) {
+      ...TopicDetails
     }
   }
 }
 
 subscription memberAdded($id: ID!, $joinSecret: String!) {
   memberAdded(id: $id, joinSecret: $joinSecret) {
-    id
-    lastSeenAt
-    name
+    ...SessionMember
   }
 }
 
 subscription memberUpdated($id: ID!, $joinSecret: String!) {
   memberUpdated(id: $id, joinSecret: $joinSecret) {
-    id
-    lastSeenAt
-    name
+    ...SessionMember
   }
 }
 
 subscription memberRemoved($id: ID!, $joinSecret: String!) {
   memberRemoved(id: $id, joinSecret: $joinSecret) {
-    id
-    lastSeenAt
-    name
+    ...SessionMember
   }
 }
 
 subscription topicCreated($id: ID!, $joinSecret: String!) {
   topicCreated(id: $id, joinSecret: $joinSecret) {
-    id
-    name
-    description
-    startedAt
-    endedAt
-    options
-    votes {
-      memberId
-      memberName
-      vote
-      votedAt
-    }
+    ...TopicDetails
   }
 }
 
 subscription voteAdded($id: ID!, $joinSecret: String!) {
   voteAdded(id: $id, joinSecret: $joinSecret) {
-    member {
-      id
-    }
-    votedAt
+    ...TopicVoteDetails
   }
 }
 
 subscription voteEnded($id: ID!, $joinSecret: String!) {
   voteEnded(id: $id, joinSecret: $joinSecret) {
-    topic {
-      id
-      endedAt
-    }
-    votes {
-      memberId
-      memberName
-      vote
-      votedAt
-    }
+    ...TopicDetails
   }
 }

@@ -77,7 +77,7 @@ describe('EstimationService', () => {
     expect(activeTopic.description).toBe('Some topic');
     expect(activeTopic.options).toEqual(session.defaultOptions);
 
-    await service.addVote(activeTopic.id, member, 3);
+    await service.addVote(activeTopic, member, 3);
 
     const votes = await service.getVotes(activeTopic.id);
 

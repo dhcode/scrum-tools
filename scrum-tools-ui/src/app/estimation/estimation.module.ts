@@ -14,6 +14,7 @@ import { OnlineStatusPipe } from './members/online-status.pipe';
 import { JoinFormComponent } from './session-member-view/join-form/join-form.component';
 import { MemberItemComponent } from './members/member-item/member-item.component';
 import { CreateTopicFormComponent } from './session-master-view/create-topic-form/create-topic-form.component';
+import { TopicResultComponent } from './topic-result/topic-result.component';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { CreateTopicFormComponent } from './session-master-view/create-topic-for
     JoinFormComponent,
     MemberItemComponent,
     CreateTopicFormComponent,
+    TopicResultComponent,
   ],
   imports: [CommonModule, ReactiveFormsModule, EstimationRoutingModule, SharedModule],
 })

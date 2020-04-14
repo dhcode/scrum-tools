@@ -1,0 +1,21 @@
+@import "src/styles/colors";
+
+.vote-options {
+  margin: 1rem 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 1rem;
+
+}
+
+@media only screen and (min-width: 400px) {
+  .vote-options {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+@media only screen and (min-width: 800px) {
+  .vote-options {
+    grid-template-columns: repeat(10, 1fr);
+  }
+}

@@ -11,6 +11,11 @@
     "generate": "graphql-codegen --config codegen.yml"
   },
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dhcode/scrum-tools.git",
+    "directory": "scrum-tools-ui"
+  },
   "dependencies": {
     "@angular/animations": "~9.1.0",
     "@angular/cdk": "^9.2.0",

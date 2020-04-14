@@ -18,6 +18,17 @@ Stack:
 
 ## Start development
 
+Clone:
+    
+    git clone https://github.com/dhcode/scrum-tools.git
+    cd scrum-tools
+
+Install dependencies:
+
+    npm install
+    cd scrum-tools-ui
+    npm install
+
 Start redis: 
 
     docker run -p 6379:6379 --name redis redis:5.0.8-alpine

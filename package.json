@@ -5,6 +5,10 @@
   "author": "Dominik Herbst",
   "private": true,
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dhcode/scrum-tools.git"
+  },
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",

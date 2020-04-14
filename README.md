@@ -42,7 +42,9 @@ Start frontend
     cd scrum-tools-ui
     npm run start
     
-Open: http://localhost:4200
+Open the UI: http://localhost:4200
+
+Open the API Explorer: http://localhost:3000/graphql
 
 ## License
 

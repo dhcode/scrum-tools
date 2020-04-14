@@ -16,6 +16,10 @@ mutation joinSession($id: ID!, $joinSecret: String!, $name: String!) {
   }
 }
 
+mutation leaveSession($id: ID!, $memberId: String!, $secret: String!) {
+  leaveSession(id: $id, memberId: $memberId, secret: $secret)
+}
+
 mutation pingSessionMember($id: ID!, $memberId: String!, $secret: String!) {
   pingSessionMember(id: $id, memberId: $memberId, secret: $secret)
 }

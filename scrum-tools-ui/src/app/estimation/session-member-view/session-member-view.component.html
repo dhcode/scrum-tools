@@ -28,6 +28,10 @@
 
   <app-join-form *ngIf="!memberId" [session]="session" (joined)="initMember()"></app-join-form>
 
+  <p>
+    <button *ngIf="memberId" type="button" class="btn secondary" (click)="leaveSession()">Leave session</button>
+  </p>
+
 
 </ng-container>
 

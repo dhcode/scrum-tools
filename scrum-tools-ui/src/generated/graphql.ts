@@ -206,6 +206,14 @@ export type JoinSessionMutation = {
   joinSession: Pick<EstimationMember, 'id' | 'joinedAt' | 'lastSeenAt' | 'name' | 'secret'>;
 };
 
+export type LeaveSessionMutationVariables = {
+  id: Scalars['ID'];
+  memberId: Scalars['String'];
+  secret: Scalars['String'];
+};
+
+export type LeaveSessionMutation = Pick<Mutation, 'leaveSession'>;
+
 export type PingSessionMemberMutationVariables = {
   id: Scalars['ID'];
   memberId: Scalars['String'];
@@ -448,6 +456,18 @@ export const JoinSessionDocument = gql`
 })
 export class JoinSessionGQL extends Apollo.Mutation<JoinSessionMutation, JoinSessionMutationVariables> {
   document = JoinSessionDocument;
+}
+export const LeaveSessionDocument = gql`
+  mutation leaveSession($id: ID!, $memberId: String!, $secret: String!) {
+    leaveSession(id: $id, memberId: $memberId, secret: $secret)
+  }
+`;
+
+@Injectable({
+  providedIn: 'root',
+})
+export class LeaveSessionGQL extends Apollo.Mutation<LeaveSessionMutation, LeaveSessionMutationVariables> {
+  document = LeaveSessionDocument;
 }
 export const PingSessionMemberDocument = gql`
   mutation pingSessionMember($id: ID!, $memberId: String!, $secret: String!) {

@@ -2,11 +2,12 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { SessionView } from './session-view';
 import { ActivatedRoute } from '@angular/router';
 import { EstimationService, SessionInfo } from '../services/estimation.service';
-import { AddVoteGQL, PingSessionMemberGQL, SessionDetailsFragment } from '../../../generated/graphql';
+import { AddVoteGQL, LeaveSessionGQL, PingSessionMemberGQL, SessionDetailsFragment } from '../../../generated/graphql';
 import { Subscription, timer } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { FormControl, Validators } from '@angular/forms';
 import { LoadingState, trackLoading } from '../../shared/loading.util';
+import { LeaveSessionArgs } from '../../../../../scrum-tools-backend/estimate/models/estimation-requests';
 
 @Component({
   selector: 'app-session-member-view',
@@ -29,6 +30,7 @@ export class SessionMemberViewComponent extends SessionView implements OnInit, O
     estimationService: EstimationService,
     private ping: PingSessionMemberGQL,
     private addVoteGQL: AddVoteGQL,
+    private leaveSessionGQL: LeaveSessionGQL,
   ) {
     super(route, estimationService);
   }
@@ -91,6 +93,16 @@ export class SessionMemberViewComponent extends SessionView implements OnInit, O
       .pipe(trackLoading(this.voteLoadingState))
       .subscribe(() => {
         this.vote = vote;
+      });
+  }
+
+  leaveSession() {
+    this.leaveSessionGQL
+      .mutate({ id: this.sessionId, memberId: this.memberId, secret: this.memberSecret })
+      .pipe(trackLoading(this.loadingState))
+      .subscribe(() => {
+        this.memberId = null;
+        this.memberSecret = null;
       });
   }
 }

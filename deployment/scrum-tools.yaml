@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scrum-tools
+  labels:
+    app: scrum-tools
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: scrum-tools
+  template:
+    metadata:
+      labels:
+        name: scrum-tools
+    spec:
+      containers:
+        - name: scrum-tools
+          image: dhcode/scrum-tools:latest
+          env:
+            - name: REDIS_URI
+              value: "redis://scrum-tools-keydb:6379/0"
+          ports:
+            - containerPort: 3000

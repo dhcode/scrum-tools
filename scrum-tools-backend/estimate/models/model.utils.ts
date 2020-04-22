@@ -9,7 +9,6 @@ export function clearVote(vote: TopicVote): TopicVote {
 }
 
 export function clearSession(session: EstimationSession, isAdmin = false): EstimationSession {
-  console.log('clearSession', isAdmin, session);
   if (!session.adminSecret) {
     console.error(new Error('admin secret not found'));
   }

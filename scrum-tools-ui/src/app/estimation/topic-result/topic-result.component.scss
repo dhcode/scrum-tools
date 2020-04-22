@@ -5,6 +5,13 @@
   padding: 0.5rem 1rem;
   background: $note-bg-color;
   margin: 0.5rem;
+  &:first-of-type {
+    margin-left: 0;
+  }
+  &.active {
+    background: $accent-color;
+    color: white;
+  }
 }
 
 .votes {
@@ -16,6 +23,8 @@
   .vote {
     display: block;
     background: $note-bg-color;
+    opacity: 1;
+    animation: show-vote 500ms ease-out;
 
     .name {
       text-align: center;
@@ -30,6 +39,20 @@
 
   }
 
+}
+
+.no-votes {
+  display: block;
+  background: $note-bg-color;
+}
+
+@keyframes show-vote {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @media only screen and (min-width: 400px) {

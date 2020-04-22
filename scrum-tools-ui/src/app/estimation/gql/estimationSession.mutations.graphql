@@ -28,8 +28,8 @@ mutation removeMember($id: ID!, $memberId: String!, $adminSecret: String!) {
   removeMember(id: $id, memberId: $memberId, adminSecret: $adminSecret)
 }
 
-mutation createTopic($id: ID!, $adminSecret: String!, $name: String!) {
-  createTopic(id: $id, adminSecret: $adminSecret, name: $name) {
+mutation createTopic($id: ID!, $adminSecret: String!, $name: String!, $description: String) {
+  createTopic(id: $id, adminSecret: $adminSecret, name: $name, description: $description) {
     id
     sessionId
     name

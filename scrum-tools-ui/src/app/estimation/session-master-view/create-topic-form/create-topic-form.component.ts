@@ -12,8 +12,9 @@ export class CreateTopicFormComponent implements OnInit {
   @Input() session: SessionDetailsFragment;
   @Output() joined = new EventEmitter();
 
-  name = new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]);
-  form = new FormGroup({ name: this.name });
+  name = new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]);
+  description = new FormControl('', [Validators.maxLength(2000)]);
+  form = new FormGroup({ name: this.name, description: this.description });
 
   loadingState = new LoadingState();
 

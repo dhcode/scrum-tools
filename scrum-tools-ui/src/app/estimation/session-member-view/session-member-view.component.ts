@@ -7,7 +7,6 @@ import { Subscription, timer } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { FormControl, Validators } from '@angular/forms';
 import { LoadingState, trackLoading } from '../../shared/loading.util';
-import { LeaveSessionArgs } from '../../../../../scrum-tools-backend/estimate/models/estimation-requests';
 
 @Component({
   selector: 'app-session-member-view',

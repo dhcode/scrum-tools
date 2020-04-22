@@ -1,7 +1,7 @@
 <ng-container *ngIf="loadingState.loaded && session">
   <div class="basic-info">
     <div>
-      <h2>{{session.name}}</h2>
+      <h3>Session: {{session.name}}</h3>
       <pre>{{session.description}}</pre>
       <div class="join-link">
         {{joinLink}}
@@ -14,7 +14,7 @@
   <div *ngIf="currentTopic">
     <app-topic-result [topic]="currentTopic" [showOptions]="true"></app-topic-result>
 
-    <button *ngIf="session.activeTopic" type="button" class="btn" (click)="endVote()">End vote</button>
+    <button *ngIf="session.activeTopic" type="button" class="btn" (click)="endVote()">End vote & reveal</button>
   </div>
 
   <div *ngIf="!session.activeTopic">

@@ -1,15 +1,18 @@
-<h3>{{topic.name}}</h3>
+<h1>{{topic.name}}</h1>
 <p class="small">Started <app-time-ago [date]="topic.startedAt"></app-time-ago></p>
 
 <p *ngIf="showOptions">
-  Options:
-  <span *ngFor="let opt of topic.options" class="option">{{opt ? opt : '?'}}</span>
+  Options:<br>
+  <span *ngFor="let opt of topic.options" class="option" [class.active]="popularVote === opt">{{opt ? opt : '?'}}</span>
 </p>
 
-<h4>{{topic.votes.length}} votes received</h4>
+<h4 *ngIf="topic.votes.length">{{topic.votes.length}} votes received</h4>
+<h4 *ngIf="!topic.votes.length">Votes</h4>
 
-<div class="votes">
-  <div *ngFor="let vote of topic.votes" class="vote">
+<div *ngIf="!topic.votes.length" class="primary-note">No votes received yet</div>
+
+<div *ngIf="topic.votes.length" class="votes">
+  <div *ngFor="let vote of topic.votes; trackBy: byId" class="vote">
     <div class="name">{{vote.memberName}}</div>
     <div class="result" *ngIf="vote.vote === null">✓</div>
     <div class="result" *ngIf="vote.vote !== null">

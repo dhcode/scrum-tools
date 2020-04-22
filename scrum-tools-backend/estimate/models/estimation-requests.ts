@@ -198,7 +198,7 @@ export class CreateTopicArgs {
   @Field({ nullable: true })
   @IsString()
   @IsOptional()
-  @MaxLength(10)
+  @MaxLength(2000)
   description: string;
 }
 

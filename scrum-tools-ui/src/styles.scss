@@ -43,7 +43,9 @@ app-root {
   }
   > footer {
     border-top: 1px solid #ccc;
-    padding: 1rem;
+    .footer {
+      padding: 1rem;
+    }
   }
 }
 
@@ -66,6 +68,9 @@ app-root {
     width: 800px;
     margin: 0 auto;
   }
-
+  .footer {
+    width: 800px;
+    margin: 0 auto;
+  }
 
 }

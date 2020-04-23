@@ -234,6 +234,7 @@ export type CreateTopicMutationVariables = {
   id: Scalars['ID'];
   adminSecret: Scalars['String'];
   name: Scalars['String'];
+  description?: Maybe<Scalars['String']>;
 };
 
 export type CreateTopicMutation = { createTopic: Pick<EstimationTopic, 'id' | 'sessionId' | 'name' | 'options'> };
@@ -497,8 +498,8 @@ export class RemoveMemberGQL extends Apollo.Mutation<RemoveMemberMutation, Remov
   document = RemoveMemberDocument;
 }
 export const CreateTopicDocument = gql`
-  mutation createTopic($id: ID!, $adminSecret: String!, $name: String!) {
-    createTopic(id: $id, adminSecret: $adminSecret, name: $name) {
+  mutation createTopic($id: ID!, $adminSecret: String!, $name: String!, $description: String) {
+    createTopic(id: $id, adminSecret: $adminSecret, name: $name, description: $description) {
       id
       sessionId
       name

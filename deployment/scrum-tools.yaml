@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: scrum-tools
-          image: dhcode/scrum-tools:v0.0.1
+          image: dhcode/scrum-tools:v0.0.2
           env:
             - name: REDIS_URI
               value: "redis://scrum-tools-keydb:6379/0"

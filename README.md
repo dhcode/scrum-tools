@@ -2,7 +2,7 @@
 
 The project provides tools to support in scrum processes.
 
-**Work in progress**
+[**Scrum Tools Demo**](https://scrumit.live/)
 
 Features:
 

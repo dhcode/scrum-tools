@@ -1,3 +1,5 @@
+# every time you change this file run: npm run generate
+
 subscription sessionUpdated($id: ID!, $joinSecret: String!, $adminSecret: String) {
   sessionUpdated(id: $id, joinSecret: $joinSecret, adminSecret: $adminSecret) {
     id

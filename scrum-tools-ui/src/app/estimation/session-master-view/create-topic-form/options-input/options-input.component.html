@@ -1,0 +1,11 @@
+<div class="option-input-container" *ngFor="let control of options.controls; let i=index">
+  <div class="option-output" *ngIf="!editing">{{control.value || '?'}}</div>
+  <div class="option-input" *ngIf="editing">
+    <input [formControl]="control" type="text">
+    <button type="button" class="remove-btn danger" (click)="removeOption(i)" [disabled]="options.length === 1">✕</button>
+    <button type="button" class="add-btn secondary" (click)="addOption(i + 1)" [disabled]="options.length === 20">+</button>
+  </div>
+</div>
+<div class="option-input-container" *ngIf="!editing && !disabled">
+  <button type="button" class="secondary edit-btn" (click)="enableEditing()">🖉</button>
+</div>

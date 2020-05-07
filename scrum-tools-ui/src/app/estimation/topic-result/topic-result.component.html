@@ -2,8 +2,8 @@
 <p class="small">Started <app-time-ago [date]="topic.startedAt"></app-time-ago></p>
 
 <p *ngIf="showOptions">
-  Options:<br>
-  <span *ngFor="let opt of topic.options" class="option" [class.active]="popularVote === opt">{{opt ? opt : '?'}}</span>
+  Options<br>
+  <span *ngFor="let opt of topic.options" class="option" [class.active]="popularVote === opt">{{opt || '?'}}</span>
 </p>
 
 <h4 *ngIf="topic.votes.length">{{topic.votes.length}} votes received</h4>

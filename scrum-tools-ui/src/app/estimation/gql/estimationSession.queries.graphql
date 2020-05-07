@@ -1,3 +1,5 @@
+# every time you change this file run: npm run generate
+
 query estimationSessionOverview($id: ID!, $joinSecret: String!, $adminSecret: String) {
   estimationSession(id: $id, joinSecret: $joinSecret, adminSecret: $adminSecret) {
     ...SessionOverview
@@ -32,6 +34,7 @@ fragment SessionDetails on EstimationSession {
   joinSecret
   adminSecret
   modifiedAt
+  defaultOptions
   activeTopic {
     ...TopicDetails
   }

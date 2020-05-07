@@ -5,6 +5,15 @@
     <ng-template appFormErrorMsg="required" let-info>A topic name is required</ng-template>
   </app-form-errors>
 
+  <div>
+    Options<br>
+    <app-options-input [formControl]="options"></app-options-input>
+    <app-form-errors [control]="options">
+      <ng-template appFormErrorMsg="invalidOption" let-info>Only unique numbers between 1 and 99 or ? is allowed.</ng-template>
+    </app-form-errors>
+  </div>
+
+
   <button [disabled]="form.invalid || loadingState.loading">Create topic</button>
 
   <app-loading-spinner *ngIf="loadingState.loading"></app-loading-spinner>

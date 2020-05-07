@@ -1,3 +1,5 @@
+# every time you change this file run: npm run generate
+
 mutation createSession($name: String!) {
   createSession(name: $name, description: "") {
     id
@@ -13,6 +15,17 @@ mutation joinSession($id: ID!, $joinSecret: String!, $name: String!) {
     lastSeenAt
     name
     secret
+  }
+}
+
+mutation updateSession($id: ID!, $adminSecret: String!, $joinSecret: String, $name: String, $description: String, $defaultOptions: [Int!]) {
+  updateSession(id: $id, adminSecret: $adminSecret, joinSecret: $joinSecret, name: $name, description: $description, defaultOptions: $defaultOptions) {
+    id
+    joinSecret
+    adminSecret
+    name
+    description
+    defaultOptions
   }
 }
 

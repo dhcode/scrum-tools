@@ -15,6 +15,7 @@ import { JoinFormComponent } from './session-member-view/join-form/join-form.com
 import { MemberItemComponent } from './members/member-item/member-item.component';
 import { CreateTopicFormComponent } from './session-master-view/create-topic-form/create-topic-form.component';
 import { TopicResultComponent } from './topic-result/topic-result.component';
+import { OptionsInputComponent } from './session-master-view/create-topic-form/options-input/options-input.component';
 
 @NgModule({
   declarations: [
@@ -29,6 +30,7 @@ import { TopicResultComponent } from './topic-result/topic-result.component';
     MemberItemComponent,
     CreateTopicFormComponent,
     TopicResultComponent,
+    OptionsInputComponent,
   ],
   imports: [CommonModule, ReactiveFormsModule, EstimationRoutingModule, SharedModule],
 })

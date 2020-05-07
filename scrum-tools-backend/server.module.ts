@@ -9,12 +9,12 @@ import { join } from 'path';
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    GraphQLModule.forRoot({ autoSchemaFile: 'scrum-tools-api/schema.graphql', installSubscriptionHandlers: true }),
-    RedisModule,
-    EstimateModule,
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'scrum-tools-ui/dist/scrum-tools-ui'),
     }),
+    GraphQLModule.forRoot({ autoSchemaFile: 'scrum-tools-api/schema.graphql', installSubscriptionHandlers: true }),
+    RedisModule,
+    EstimateModule,
   ],
   controllers: [],
   providers: [],

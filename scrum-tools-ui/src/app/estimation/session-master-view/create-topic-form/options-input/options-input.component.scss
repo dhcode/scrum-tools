@@ -1,0 +1,55 @@
+@import "src/styles/colors";
+
+.option-input-container {
+  display: inline-block;
+  margin-top: 0.5rem;
+  margin-right: 0.5rem;
+  margin-bottom: 0.5rem;
+  &:last-of-type {
+    margin-bottom: 1rem;
+  }
+}
+
+.edit-btn {
+  padding: 0.5rem;
+}
+
+.option-output {
+  background: $note-bg-color;
+  padding: 0.5rem 0;
+  text-align: center;
+  width: 3rem;
+}
+
+.option-input {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  grid-template-columns: 3rem 2rem;
+
+  input {
+    grid-column: 1/2;
+    grid-row: 1/3;
+    text-align: center;
+    background: $note-bg-color;
+    margin: 0;
+
+    &:focus {
+      background: white;
+    }
+  }
+
+  button {
+    padding: 0;
+  }
+
+  .remove-btn {
+    grid-column: 2/3;
+    grid-row: 1/2;
+  }
+
+  .add-btn {
+    grid-column: 2/3;
+    grid-row: 2/3;
+  }
+
+}

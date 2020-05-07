@@ -48,6 +48,8 @@ Open the API Explorer: http://localhost:3000/graphql
 
 ## Deployment
 
+Docker image built and provided by [Docker Hub](https://hub.docker.com/repository/docker/dhcode/scrum-tools)
+
 See [deployment/README.md](deployment/README.md)
 
 ## Issues

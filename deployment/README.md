@@ -29,3 +29,6 @@ Expose the service with ingress:
 
     kubectl apply -f deployment/scrum-tools-ingress.yaml
     
+Update the deployment to the latest version:
+
+    kubectl rollout restart deployment/scrum-tools

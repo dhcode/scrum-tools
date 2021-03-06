@@ -5,6 +5,7 @@ import { RedisService } from '../../redis/redis.service';
 import { EstimationError } from '../models/estimation-error';
 
 const expireSeconds = 90 * 86400;
+const memberOverwriteSeconds = 12 * 3600;
 enum Store {
   session = 'estSession', // hash key per session
   members = 'estSessionMembers', // hash key per session, field per member
@@ -109,8 +110,13 @@ export class EstimationService {
     };
 
     const members = await this.getMembers(sessionId);
-    if (members.find((m) => m.name === name)) {
-      throw new EstimationError(409, 'memberExists', `Member with name '${name}' already exists`);
+    const existingMember = members.find((m) => m.name === name);
+    if (existingMember) {
+      if (existingMember.lastSeenAt.getTime() < new Date().getTime() - memberOverwriteSeconds * 1000) {
+        await this.removeMember(sessionId, existingMember.id);
+      } else {
+        throw new EstimationError(409, 'memberExists', `Member with name '${name}' already exists`);
+      }
     }
 
     await this.redis.insertListEntry(Store.members, sessionId, member, expireSeconds);

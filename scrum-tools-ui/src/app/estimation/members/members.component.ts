@@ -6,7 +6,7 @@ import { SessionDetailsFragment, SessionMemberFragment } from '../../../generate
   templateUrl: './members.component.html',
   styleUrls: ['./members.component.scss'],
 })
-export class MembersComponent implements OnInit {
+export class MembersComponent {
   @Input() session: SessionDetailsFragment;
   isDetailed = false;
 
@@ -17,7 +17,10 @@ export class MembersComponent implements OnInit {
     return !!this.session.adminSecret;
   }
 
-  ngOnInit(): void {}
+  get onlineMembers(): number {
+    const now = new Date().getTime();
+    return this.session.members.filter((m) => new Date(m.lastSeenAt).getTime() > now - 10000).length;
+  }
 
   byId(member: SessionMemberFragment) {
     return member.id;

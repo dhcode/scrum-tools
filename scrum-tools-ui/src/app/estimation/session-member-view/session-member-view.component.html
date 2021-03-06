@@ -4,9 +4,10 @@
     <pre>{{session.description}}</pre>
   </div>
 
-  <app-topic-result *ngIf="currentTopic" [topic]="currentTopic"></app-topic-result>
-
   <div *ngIf="session.activeTopic" class="topic-info">
+
+    <h1>{{session.activeTopic.name}}</h1>
+    <p class="small">Started <app-time-ago [date]="session.activeTopic.startedAt"></app-time-ago></p>
 
     <div class="vote-options" *ngIf="!voteLoadingState.loading">
       <button *ngFor="let opt of session.activeTopic.options"
@@ -20,6 +21,12 @@
     <app-error-message *ngIf="voteLoadingState.error" [error]="voteLoadingState.error"></app-error-message>
 
   </div>
+
+  <div *ngIf="currentTopic && !session.activeTopic" class="topic-info">
+    <h1>{{currentTopic.name}}</h1>
+    <p class="small">Started <app-time-ago [date]="currentTopic.startedAt"></app-time-ago> and ended <app-time-ago [date]="currentTopic.endedAt"></app-time-ago></p>
+  </div>
+  <app-topic-result *ngIf="currentTopic" [topic]="currentTopic"></app-topic-result>
 
   <div class="members">
     <app-members [session]="session"></app-members>

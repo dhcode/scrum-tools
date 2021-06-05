@@ -1,10 +1,9 @@
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: scrum-tools-ingress
   annotations:
     # based on https://cert-manager.io/docs/tutorials/acme/ingress/
-    kubernetes.io/ingress.class: "nginx"
     cert-manager.io/issuer: "letsencrypt-prod"
 spec:
   tls:
@@ -16,6 +15,9 @@ spec:
       http:
         paths:
           - path: /
+            pathType: Prefix
             backend:
-              serviceName: scrum-tools
-              servicePort: 3000
+              service:
+                name: scrum-tools
+                port:
+                  number: 3000

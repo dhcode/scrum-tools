@@ -6,7 +6,7 @@
 
   <div *ngIf="session.activeTopic" class="topic-info">
 
-    <h1>{{session.activeTopic.name}}</h1>
+    <h1 class="topic-heading">{{session.activeTopic.name}}</h1>
     <p class="small">Started <app-time-ago [date]="session.activeTopic.startedAt"></app-time-ago></p>
 
     <div class="vote-options" *ngIf="!voteLoadingState.loading">

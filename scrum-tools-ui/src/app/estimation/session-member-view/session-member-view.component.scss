@@ -8,6 +8,10 @@
 
 }
 
+.topic-heading {
+  line-height: normal;
+}
+
 @media only screen and (min-width: 400px) {
   .vote-options {
     grid-template-columns: repeat(5, 1fr);

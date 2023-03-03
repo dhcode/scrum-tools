@@ -44,6 +44,15 @@ export class SessionOverviewComponent implements OnInit, OnDestroy {
       .subscribe(
         (sessions) => {
           console.log('got sessions', sessions);
+          sessions.sort((a, b) => {
+            if (a.modifiedAt < b.modifiedAt) {
+              return 1;
+            }
+            if (a.modifiedAt > b.modifiedAt) {
+              return -1;
+            }
+            return 0;
+          });
           this.sessions = sessions;
         },
         (err) => {},

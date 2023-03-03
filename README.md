@@ -50,6 +50,10 @@ Open the API Explorer: http://localhost:3000/graphql
 
 Docker image built and provided by [Docker Hub](https://hub.docker.com/repository/docker/dhcode/scrum-tools)
 
+Build manually:
+
+    docker build -t dhcode/scrum-tools:latest .
+
 See [deployment/README.md](deployment/README.md)
 
 ## Issues

@@ -54,7 +54,7 @@ export function mapAsyncField<T, I>(
   mapFn: (item: I, ...args) => I,
   ...args
 ): AsyncIterator<T> {
-  return mapAsync(iterator, (item) => {
+  return mapAsync(iterator, (item: any) => {
     if (item && field in item) {
       item[field] = mapFn(item[field], ...args);
     }

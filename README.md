@@ -53,6 +53,7 @@ Docker image built and provided by [Docker Hub](https://hub.docker.com/repositor
 Build manually:
 
     docker build -t dhcode/scrum-tools:latest .
+    docker push docker.io/dhcode/scrum-tools:latest
 
 See [deployment/README.md](deployment/README.md)
 

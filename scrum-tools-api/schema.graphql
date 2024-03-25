@@ -43,7 +43,7 @@ type EstimationSession {
   modifiedAt: DateTime!
   defaultOptions: [Int!]!
   activeTopic: EstimationTopic
-  topics(limit: Int = 10): [EstimationTopic!]
+  topics(limit: Int! = 10): [EstimationTopic!]
   members: [EstimationMember!]
 }
 

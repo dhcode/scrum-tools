@@ -4,6 +4,7 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { EstimateModule } from './estimate/estimate.module';
 import { RedisModule } from './redis/redis.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 
 @Module({
@@ -12,7 +13,11 @@ import { join } from 'path';
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'scrum-tools-ui/dist/scrum-tools-ui'),
     }),
-    GraphQLModule.forRoot({ autoSchemaFile: 'scrum-tools-api/schema.graphql', installSubscriptionHandlers: true }),
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      autoSchemaFile: 'scrum-tools-api/schema.graphql',
+      installSubscriptionHandlers: true,
+    }),
     RedisModule,
     EstimateModule,
   ],

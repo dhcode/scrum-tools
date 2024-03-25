@@ -1,6 +1,6 @@
 import { Inject, Injectable, OnApplicationShutdown, Provider } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import * as IORedis from 'ioredis';
+import IORedis from 'ioredis';
 import { Redis } from 'ioredis';
 import { eJsonParse, eJsonStringify, randomString } from '../shared/utils';
 import { RedisPubSub } from 'graphql-redis-subscriptions';
@@ -10,7 +10,10 @@ export class RedisService implements OnApplicationShutdown {
   readonly redisUri: string;
   readonly pubSub: RedisPubSub;
 
-  constructor(configService: ConfigService, @Inject('REDIS_CONNECTION') public redis: Redis) {
+  constructor(
+    configService: ConfigService,
+    @Inject('REDIS_CONNECTION') public redis: Redis,
+  ) {
     this.redisUri = configService.get<string>('REDIS_URI');
     this.pubSub = new RedisPubSub({
       publisher: this.redis,
@@ -82,7 +85,7 @@ export class RedisService implements OnApplicationShutdown {
 
   async getObjectById<T>(collection: string, id: string): Promise<T> {
     const key = collection + ':' + id;
-    return ((await this.redis.hgetall(key)) as unknown) as T;
+    return (await this.redis.hgetall(key)) as unknown as T;
   }
 
   async insertListEntry(
@@ -137,7 +140,7 @@ export class RedisService implements OnApplicationShutdown {
     const key = collection + ':' + listId;
     const result = await this.redis.hgetall(key);
     if (result) {
-      return (Object.values(result) as unknown) as T[];
+      return Object.values(result) as unknown as T[];
     } else {
       return [];
     }
@@ -148,7 +151,7 @@ export class RedisService implements OnApplicationShutdown {
   }
 }
 
-export function hmsetTransformer(args: IORedis.ValueType[]): IORedis.ValueType[] {
+export function hmsetTransformer(args: any[]): any[] {
   if (args.length === 2) {
     if (typeof args[1] === 'object' && args[1] !== null) {
       const obj = args[1];

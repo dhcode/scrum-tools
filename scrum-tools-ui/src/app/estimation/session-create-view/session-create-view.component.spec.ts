@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { SessionCreateViewComponent } from './session-create-view.component';
 
@@ -6,7 +6,7 @@ describe('SessionCreateViewComponent', () => {
   let component: SessionCreateViewComponent;
   let fixture: ComponentFixture<SessionCreateViewComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [SessionCreateViewComponent],
     }).compileComponents();

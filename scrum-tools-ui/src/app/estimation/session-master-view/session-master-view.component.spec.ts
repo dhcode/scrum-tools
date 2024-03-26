@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { SessionMasterViewComponent } from './session-master-view.component';
 
@@ -6,7 +6,7 @@ describe('SessionMasterViewComponent', () => {
   let component: SessionMasterViewComponent;
   let fixture: ComponentFixture<SessionMasterViewComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [SessionMasterViewComponent],
     }).compileComponents();

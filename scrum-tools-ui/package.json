@@ -17,15 +17,15 @@
     "directory": "scrum-tools-ui"
   },
   "dependencies": {
-    "@angular/animations": "~12.2.17",
+    "@angular/animations": "~13.4.0",
     "@angular/cdk": "^10.2.7",
-    "@angular/common": "~12.2.17",
-    "@angular/compiler": "~12.2.17",
-    "@angular/core": "~12.2.17",
-    "@angular/forms": "~12.2.17",
-    "@angular/platform-browser": "~12.2.17",
-    "@angular/platform-browser-dynamic": "~12.2.17",
-    "@angular/router": "~12.2.17",
+    "@angular/common": "~13.4.0",
+    "@angular/compiler": "~13.4.0",
+    "@angular/core": "~13.4.0",
+    "@angular/forms": "~13.4.0",
+    "@angular/platform-browser": "~13.4.0",
+    "@angular/platform-browser-dynamic": "~13.4.0",
+    "@angular/router": "~13.4.0",
     "@apollo/client": "^3.9.9",
     "apollo-angular": "^2.6.0",
     "apollo-angular-link-http": "^1.9.0",
@@ -45,10 +45,10 @@
     "zone.js": "~0.11.4"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "~12.2.18",
-    "@angular/cli": "~12.2.18",
-    "@angular/compiler-cli": "~12.2.17",
-    "@angular/language-service": "~12.2.17",
+    "@angular-devkit/build-angular": "~13.3.11",
+    "@angular/cli": "~13.3.11",
+    "@angular/compiler-cli": "~13.4.0",
+    "@angular/language-service": "~13.4.0",
     "@graphql-codegen/cli": "^1.13.2",
     "@graphql-codegen/introspection": "1.13.2",
     "@graphql-codegen/typescript": "1.13.2",
@@ -69,6 +69,6 @@
     "protractor": "~7.0.0",
     "ts-node": "~8.3.0",
     "tslint": "~6.1.0",
-    "typescript": "~4.3.5"
+    "typescript": "~4.6.4"
   }
 }

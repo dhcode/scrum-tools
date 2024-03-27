@@ -5,7 +5,7 @@ import { EstimationService, SessionInfo } from '../services/estimation.service';
 import { AddVoteGQL, LeaveSessionGQL, PingSessionMemberGQL, SessionDetailsFragment } from '../../../generated/graphql';
 import { Subscription, timer } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { FormControl, Validators } from '@angular/forms';
+import { UntypedFormControl, Validators } from '@angular/forms';
 import { LoadingState, trackLoading } from '../../shared/loading.util';
 
 @Component({
@@ -18,7 +18,7 @@ export class SessionMemberViewComponent extends SessionView implements OnInit, O
   memberId: string = null;
   memberSecret: string = null;
 
-  memberName = new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]);
+  memberName = new UntypedFormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]);
 
   voteLoadingState = new LoadingState();
 

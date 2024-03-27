@@ -8,7 +8,7 @@ import {
   TemplateRef,
   ViewChildren,
 } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { FormErrorMsgDirective } from './form-error-msg.directive';
 
 interface ErrorInfo {
@@ -28,7 +28,7 @@ export class FormErrorsComponent implements DoCheck, AfterViewInit {
 
   private lastValue = null;
 
-  @Input() control: FormControl;
+  @Input() control: UntypedFormControl;
 
   @ViewChildren(FormErrorMsgDirective) defaultMsgTemplates: QueryList<FormErrorMsgDirective>;
   @ContentChildren(FormErrorMsgDirective) msgTemplates: QueryList<FormErrorMsgDirective>;

@@ -4,8 +4,11 @@ import { Subscription } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { CodedError } from '../../shared/error-handling.util';
 import { SessionDetailsFragment, TopicDetailsFragment, TopicVoteDetailsFragment } from '../../../generated/graphql';
+import { Component, OnDestroy } from '@angular/core';
 
-export abstract class SessionView {
+@Component({ template: '' })
+// tslint:disable-next-line:component-class-suffix
+export abstract class SessionView implements OnDestroy {
   sessionId: string;
 
   session: SessionDetailsFragment;
@@ -16,7 +19,10 @@ export abstract class SessionView {
 
   protected sub = new Subscription();
 
-  protected constructor(protected route: ActivatedRoute, protected estimationService: EstimationService) {}
+  protected constructor(
+    protected route: ActivatedRoute,
+    protected estimationService: EstimationService,
+  ) {}
 
   ngOnDestroy(): void {
     this.sub.unsubscribe();

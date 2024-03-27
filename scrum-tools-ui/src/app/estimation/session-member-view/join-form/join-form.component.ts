@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { LoadingState, trackLoading } from '../../../shared/loading.util';
 import { JoinSessionGQL, SessionDetailsFragment } from '../../../../generated/graphql';
 import { EstimationService } from '../../services/estimation.service';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-join-form',
@@ -13,8 +13,8 @@ export class JoinFormComponent implements OnInit {
   @Input() session: SessionDetailsFragment;
   @Output() joined = new EventEmitter();
 
-  name = new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]);
-  form = new FormGroup({ name: this.name });
+  name = new UntypedFormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]);
+  form = new UntypedFormGroup({ name: this.name });
 
   loadingState = new LoadingState();
 

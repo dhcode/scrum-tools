@@ -2,8 +2,8 @@ import { Component, forwardRef, OnDestroy, OnInit } from '@angular/core';
 import {
   AbstractControl,
   ControlValueAccessor,
-  FormArray,
-  FormControl,
+  UntypedFormArray,
+  UntypedFormControl,
   NG_VALIDATORS,
   NG_VALUE_ACCESSOR,
   ValidationErrors,
@@ -27,7 +27,7 @@ export class OptionsInputComponent implements OnInit, OnDestroy, ControlValueAcc
 
   editing = false;
 
-  options = new FormArray([]);
+  options = new UntypedFormArray([]);
 
   disabled = false;
 
@@ -75,7 +75,7 @@ export class OptionsInputComponent implements OnInit, OnDestroy, ControlValueAcc
     if (Array.isArray(options)) {
       if (this.options.length < options.length) {
         for (let i = this.options.length; i < options.length; i++) {
-          this.options.push(new FormControl('', this.validateControl));
+          this.options.push(new UntypedFormControl('', this.validateControl));
         }
       } else if (this.options.length > options.length) {
         for (let i = this.options.length; i >= options.length; i--) {
@@ -106,7 +106,7 @@ export class OptionsInputComponent implements OnInit, OnDestroy, ControlValueAcc
 
   addOption(afterIndex) {
     if (this.options.length < 20) {
-      this.options.insert(afterIndex, new FormControl('', this.validateControl));
+      this.options.insert(afterIndex, new UntypedFormControl('', this.validateControl));
       this.focusIndex = afterIndex;
     }
   }

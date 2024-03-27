@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { EstimationService } from '../services/estimation.service';
-import { EstimationSession } from '../../../generated/graphql';
+import { EstimationSession, SessionOverviewFragment } from '../../../generated/graphql';
 import { Subscription } from 'rxjs';
 import { LoadingState, trackLoading } from '../../shared/loading.util';
 
@@ -10,7 +10,7 @@ import { LoadingState, trackLoading } from '../../shared/loading.util';
   styleUrls: ['./session-overview.component.scss'],
 })
 export class SessionOverviewComponent implements OnInit, OnDestroy {
-  sessions: Partial<EstimationSession>[] = [
+  sessions: SessionOverviewFragment[] = [
     // {
     //   id: 'a',
     //   name: 'Hello',

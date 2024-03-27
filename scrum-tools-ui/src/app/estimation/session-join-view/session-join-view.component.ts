@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { JoinSessionGQL } from '../../../generated/graphql';
 import { EstimationService } from '../services/estimation.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -11,10 +11,10 @@ import { LoadingState, trackLoading } from '../../shared/loading.util';
   styleUrls: ['./session-join-view.component.scss'],
 })
 export class SessionJoinViewComponent implements OnInit {
-  name = new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]);
-  sessionId = new FormControl('', [Validators.required, Validators.maxLength(10)]);
-  joinSecret = new FormControl('', [Validators.maxLength(20)]);
-  form = new FormGroup({ name: this.name, sessionId: this.sessionId, joinSecret: this.joinSecret });
+  name = new UntypedFormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(20)]);
+  sessionId = new UntypedFormControl('', [Validators.required, Validators.maxLength(10)]);
+  joinSecret = new UntypedFormControl('', [Validators.maxLength(20)]);
+  form = new UntypedFormGroup({ name: this.name, sessionId: this.sessionId, joinSecret: this.joinSecret });
 
   loadingState = new LoadingState();
 

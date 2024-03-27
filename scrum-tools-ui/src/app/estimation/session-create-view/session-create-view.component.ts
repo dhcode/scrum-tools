@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { CreateSessionGQL } from '../../../generated/graphql';
 import { EstimationService } from '../services/estimation.service';
 import { Router } from '@angular/router';
@@ -11,8 +11,8 @@ import { LoadingState, trackLoading } from '../../shared/loading.util';
   styleUrls: ['./session-create-view.component.scss'],
 })
 export class SessionCreateViewComponent implements OnInit {
-  name = new FormControl('', [Validators.required, Validators.minLength(4), Validators.maxLength(100)]);
-  form = new FormGroup({ name: this.name });
+  name = new UntypedFormControl('', [Validators.required, Validators.minLength(4), Validators.maxLength(100)]);
+  form = new UntypedFormGroup({ name: this.name });
 
   loadingState = new LoadingState();
 

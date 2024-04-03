@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { APOLLO_OPTIONS, ApolloModule } from 'apollo-angular';
-import { HttpLinkModule } from 'apollo-angular-link-http';
-import { InMemoryCache } from 'apollo-cache-inmemory';
+import { InMemoryCache } from '@apollo/client/core';
 import { WebSocketLink } from 'apollo-link-ws';
 import { SubscriptionClient } from 'subscriptions-transport-ws';
 
@@ -17,7 +16,7 @@ export function createApollo() {
 }
 
 @NgModule({
-  exports: [ApolloModule, HttpLinkModule],
+  exports: [ApolloModule],
   providers: [
     {
       provide: APOLLO_OPTIONS,

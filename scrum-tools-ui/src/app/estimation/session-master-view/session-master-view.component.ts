@@ -30,17 +30,14 @@ export class SessionMasterViewComponent extends SessionView implements OnInit, O
   ngOnInit(): void {
     combineLatest([this.route.params, this.route.queryParams]).subscribe(([{ sessionId }, queryParams]) => {
       this.sessionId = sessionId;
-      if (sessionId) {
-        const knownSession = this.estimationService.getKnownSession(this.sessionId);
-        if (!knownSession && queryParams.joinSecret && queryParams.adminSecret) {
-          this.estimationService.addKnownSession({
-            id: sessionId,
-            joinSecret: queryParams.joinSecret,
-            adminSecret: queryParams.adminSecret,
-          });
-        }
-        this.loadSession();
+      if (sessionId && queryParams.joinSecret && queryParams.adminSecret) {
+        this.estimationService.addKnownSession({
+          id: sessionId,
+          joinSecret: queryParams.joinSecret,
+          adminSecret: queryParams.adminSecret,
+        });
       }
+      this.loadSession();
     });
   }
 

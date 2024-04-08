@@ -90,7 +90,8 @@ export abstract class SessionView implements OnDestroy {
       return;
     }
 
-    this.session.topics.sort((a, b) => {
+    const topics = this.session.topics.slice();
+    topics.sort((a, b) => {
       if (a.startedAt < b.startedAt) {
         return 1;
       }
@@ -100,7 +101,7 @@ export abstract class SessionView implements OnDestroy {
       return 0;
     });
 
-    this.currentTopic = this.session.topics[0];
+    this.currentTopic = topics[0];
   }
 
   onSessionUpdated?(session: SessionDetailsFragment) {}

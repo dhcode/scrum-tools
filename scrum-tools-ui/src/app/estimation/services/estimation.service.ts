@@ -7,14 +7,16 @@ import {
   MemberRemovedGQL,
   MemberUpdatedGQL,
   SessionDetailsFragment,
+  SessionMemberFragment,
   SessionOverviewFragment,
   SessionUpdatedGQL,
   TopicCreatedGQL,
+  TopicVoteDetailsFragment,
   VoteAddedGQL,
   VoteEndedGQL,
 } from '../../../generated/graphql';
 import { BehaviorSubject, combineLatest, merge, Observable, of, Subscription } from 'rxjs';
-import { catchError, map, share, switchMap } from 'rxjs/operators';
+import { catchError, map, share, switchMap, tap } from 'rxjs/operators';
 import { GraphQLUiError } from '../../shared/error-handling.util';
 import { Apollo } from 'apollo-angular';
 import gql from 'graphql-tag';
@@ -194,15 +196,20 @@ export class EstimationService {
   subscribeSessionWithDetails(info: SessionInfo) {
     return merge(
       this.subscribeSession(info),
-      this.memberUpdatedGQL.subscribe(info),
+      this.memberUpdatedGQL.subscribe(info).pipe(
+        tap((data) => {
+          this.updateMembersInCache(info.id, data.data.memberUpdated);
+        }),
+      ),
       this.topicCreatedGQL.subscribe(info),
       this.voteAddedGQL.subscribe(info),
       this.voteEndedGQL.subscribe(info),
     );
   }
 
-  private updateMembersInCache(sessionId: string, member, remove = false) {
-    const cache = this.apollo.getClient();
+  private updateMembersInCache(sessionId: string, member: SessionMemberFragment, remove = false) {
+    const cache = this.apollo.client;
+
     const id = `EstimationSession:${sessionId}`;
     const fragment = gql`
       fragment sessionMembers on EstimationSession {
@@ -218,15 +225,48 @@ export class EstimationService {
       return;
     }
     const index = result.members.findIndex((m) => m.id === member.id);
+    const members = [...result.members];
     if (!remove && index === -1) {
-      result.members.push(member);
+      members.push(member);
     }
     if (!remove && index !== -1) {
-      result.members[index] = member;
+      members[index] = member;
     }
     if (remove && index !== -1) {
-      result.members.splice(index, 1);
+      members.splice(index, 1);
     }
-    cache.writeFragment({ fragment, id, data: result });
+    cache.writeFragment({ fragment, id, data: { ...result, members } });
+  }
+
+  public updateVotesInCache(topicId: string, vote: TopicVoteDetailsFragment, remove = false) {
+    const cache = this.apollo.client;
+
+    const id = `EstimationTopic:${topicId}`;
+    const fragment = gql`
+      fragment activeTopicForUpdate on EstimationTopic {
+        votes {
+          memberId
+          memberName
+          vote
+          votedAt
+        }
+      }
+    `;
+    const result = cache.readFragment({ fragment, id });
+    if (!result) {
+      return;
+    }
+    const index = result.votes.findIndex((m: TopicVoteDetailsFragment) => m.memberId === vote.memberId);
+    const votes = [...result.votes];
+    if (!remove && index === -1) {
+      votes.push(vote);
+    }
+    if (!remove && index !== -1) {
+      votes[index] = vote;
+    }
+    if (remove && index !== -1) {
+      votes.splice(index, 1);
+    }
+    cache.writeFragment({ fragment, id, data: { votes } });
   }
 }

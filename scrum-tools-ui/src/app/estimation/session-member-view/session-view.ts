@@ -59,7 +59,8 @@ export abstract class SessionView implements OnDestroy {
       this.estimationService.subscribeSessionWithDetails(sessionInfo).subscribe((change) => {
         console.log('change', change);
         if ('voteAdded' in change.data) {
-          this.voteAdded(change.data.voteAdded);
+          this.estimationService.updateVotesInCache(this.currentTopic.id, change.data.voteAdded);
+          // this.voteAdded(change.data.voteAdded);
         }
 
         if (this.onSessionChange) {

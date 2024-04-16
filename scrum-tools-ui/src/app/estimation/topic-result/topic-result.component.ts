@@ -10,12 +10,17 @@ export class TopicResultComponent implements OnChanges {
   @Input() topic: TopicDetailsFragment;
   @Input() showOptions = false;
 
+  votes: TopicVoteDetailsFragment[] = [];
+
   popularVote = undefined;
 
   ngOnChanges(changes: SimpleChanges): void {
     if ('topic' in changes && this.topic) {
+      this.votes = [...this.topic.votes];
       this.sortVotes();
       this.checkPopularVote();
+    } else {
+      this.votes = [];
     }
   }
 
@@ -24,7 +29,7 @@ export class TopicResultComponent implements OnChanges {
     if (this.topic.endedAt) {
       let bestCount = 0;
       for (const option of this.topic.options) {
-        const count = this.topic.votes.filter((v) => v.vote === option).length;
+        const count = this.votes.filter((v) => v.vote === option).length;
         if (count > bestCount) {
           bestCount = count;
           this.popularVote = option;
@@ -36,7 +41,7 @@ export class TopicResultComponent implements OnChanges {
   }
 
   sortVotes() {
-    this.topic.votes.sort((a, b) => {
+    this.votes.sort((a, b) => {
       if (a.vote < b.vote) {
         return -1;
       }

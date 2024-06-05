@@ -132,7 +132,7 @@ export class EstimationService {
       map((data) => data.data.estimationSession),
       catchError((err) => {
         const errInfo = new GraphQLUiError(err);
-        if (errInfo.code === 'sessionNotFound') {
+        if (errInfo.message && errInfo.message.includes('was not found')) {
           this.removeKnownSession(info.id);
           return of(null);
         }

@@ -57,6 +57,7 @@
     <app-topic-result [topic]="currentTopic" [showOptions]="true"></app-topic-result>
 
     <button *ngIf="session.activeTopic" type="button" class="btn" (click)="endVote()">End vote & reveal</button>
+    <button *ngIf="currentTopic && !session.activeTopic" type="button" class="btn secondary small" (click)="voteAgain()">Vote again</button>
   </div>
 
   <div *ngIf="!session.activeTopic">

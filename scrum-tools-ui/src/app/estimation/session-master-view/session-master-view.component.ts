@@ -2,7 +2,13 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { EstimationService } from '../services/estimation.service';
 import { SessionView } from '../session-member-view/session-view';
-import { EndVoteGQL, RemoveMemberGQL, SessionDetailsFragment, SessionMemberFragment } from '../../../generated/graphql';
+import {
+  CreateTopicGQL,
+  EndVoteGQL,
+  RemoveMemberGQL,
+  SessionDetailsFragment,
+  SessionMemberFragment,
+} from '../../../generated/graphql';
 import { trackLoading } from '../../shared/loading.util';
 import QRCode from 'qrcode';
 import { combineLatest } from 'rxjs';
@@ -22,6 +28,7 @@ export class SessionMasterViewComponent extends SessionView implements OnInit, O
     estimationService: EstimationService,
     private removeMemberGQL: RemoveMemberGQL,
     private endVoteGQL: EndVoteGQL,
+    private createTopicGQL: CreateTopicGQL,
     private clipboard: Clipboard,
   ) {
     super(route, estimationService);
@@ -59,6 +66,13 @@ export class SessionMasterViewComponent extends SessionView implements OnInit, O
   endVote() {
     this.endVoteGQL
       .mutate({ id: this.sessionId, adminSecret: this.session.adminSecret, topicId: this.session.activeTopic.id })
+      .pipe(trackLoading(this.loadingState))
+      .subscribe();
+  }
+
+  voteAgain() {
+    this.createTopicGQL
+      .mutate({ id: this.session.id, adminSecret: this.session.adminSecret, name: this.currentTopic.name })
       .pipe(trackLoading(this.loadingState))
       .subscribe();
   }

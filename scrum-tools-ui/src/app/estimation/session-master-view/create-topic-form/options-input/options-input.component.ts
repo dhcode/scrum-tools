@@ -1,4 +1,4 @@
-import { Component, forwardRef, OnDestroy, OnInit } from '@angular/core';
+import { Component, forwardRef, OnDestroy, OnInit, Output, EventEmitter } from '@angular/core';
 import {
   AbstractControl,
   ControlValueAccessor,
@@ -21,8 +21,6 @@ import { Subscription } from 'rxjs';
   ],
 })
 export class OptionsInputComponent implements OnInit, OnDestroy, ControlValueAccessor, Validator {
-  private onChange = (v: number[]) => {};
-  private onTouched = () => {};
   private subs: Subscription;
 
   editing = false;
@@ -32,6 +30,11 @@ export class OptionsInputComponent implements OnInit, OnDestroy, ControlValueAcc
   disabled = false;
 
   focusIndex = null;
+
+  @Output() editingTriggered = new EventEmitter<boolean>();
+
+  private onChange = (v: number[]) => {};
+  private onTouched = () => {};
 
   constructor() {}
 
@@ -119,6 +122,7 @@ export class OptionsInputComponent implements OnInit, OnDestroy, ControlValueAcc
 
   enableEditing() {
     this.editing = true;
+    this.editingTriggered.emit(true);
   }
 
   validateControl(control: AbstractControl): ValidationErrors | null {

@@ -7,7 +7,7 @@
 
   <div>
     Options<br>
-    <app-options-input [formControl]="options"></app-options-input>
+    <app-options-input [formControl]="options" (editingTriggered)="editing = $event"></app-options-input>
     <app-form-errors [control]="options">
       <ng-template appFormErrorMsg="invalidOption" let-info>Only unique numbers between 1 and 99 or ? is allowed.</ng-template>
     </app-form-errors>

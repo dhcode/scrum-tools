@@ -13,6 +13,8 @@ export class CreateTopicFormComponent implements OnInit, OnChanges {
   @Input() session: SessionDetailsFragment;
   @Output() joined = new EventEmitter();
 
+  editing = false;
+
   name = new UntypedFormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]);
   description = new UntypedFormControl('', [Validators.maxLength(2000)]);
   options = new UntypedFormControl();
@@ -20,17 +22,21 @@ export class CreateTopicFormComponent implements OnInit, OnChanges {
 
   loadingState = new LoadingState();
 
-  constructor(private createTopicGQL: CreateTopicGQL, private updateSessionGQL: UpdateSessionGQL) {}
+  constructor(
+    private createTopicGQL: CreateTopicGQL,
+    private updateSessionGQL: UpdateSessionGQL,
+  ) {}
 
   ngOnInit(): void {}
 
   ngOnChanges(changes: SimpleChanges): void {
-    if ('session' in changes) {
+    if ('session' in changes && !this.editing) {
       this.options.patchValue(this.session.defaultOptions);
     }
   }
 
   createTopic() {
+    this.editing = false;
     const ops = [];
     if (JSON.stringify(this.options.value) !== JSON.stringify(this.session.defaultOptions)) {
       ops.push(

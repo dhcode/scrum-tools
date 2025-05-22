@@ -37,6 +37,7 @@
 
   <p>
     <button *ngIf="memberId" type="button" class="btn secondary" (click)="leaveSession()">Leave session</button>
+    <a *ngIf="session.adminSecret" [routerLink]="['/','e','master', session.id]" class="master-link" target="scrumitMaster">Open master view</a>
   </p>
 
 

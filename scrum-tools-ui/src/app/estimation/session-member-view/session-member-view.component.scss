@@ -12,6 +12,10 @@
   line-height: normal;
 }
 
+.master-link {
+  margin-left: 2rem;
+}
+
 @media only screen and (min-width: 400px) {
   .vote-options {
     grid-template-columns: repeat(5, 1fr);

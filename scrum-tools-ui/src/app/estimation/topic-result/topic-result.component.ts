@@ -14,6 +14,8 @@ export class TopicResultComponent implements OnChanges {
 
   popularVote = undefined;
 
+  average = undefined;
+
   ngOnChanges(changes: SimpleChanges): void {
     if ('topic' in changes && this.topic) {
       this.votes = [...this.topic.votes];
@@ -36,6 +38,18 @@ export class TopicResultComponent implements OnChanges {
         } else if (count === bestCount) {
           this.popularVote = undefined;
         }
+      }
+
+      let sum = 0;
+      let countVotesAsNumber = 0;
+      for (const vote of this.votes) {
+        if (!isNaN(vote.vote)) {
+          sum += vote.vote;
+          countVotesAsNumber++;
+        }
+      }
+      if (countVotesAsNumber > 0) {
+        this.average = sum / countVotesAsNumber;
       }
     }
   }

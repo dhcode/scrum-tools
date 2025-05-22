@@ -50,6 +50,10 @@
   background: $note-bg-color;
 }
 
+.avg {
+  margin-bottom: 1rem;
+}
+
 @keyframes show-vote {
   from {
     opacity: 0;

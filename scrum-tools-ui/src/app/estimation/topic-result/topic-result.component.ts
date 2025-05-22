@@ -43,7 +43,7 @@ export class TopicResultComponent implements OnChanges {
       let sum = 0;
       let countVotesAsNumber = 0;
       for (const vote of this.votes) {
-        if (!isNaN(vote.vote)) {
+        if (vote.vote) {
           sum += vote.vote;
           countVotesAsNumber++;
         }

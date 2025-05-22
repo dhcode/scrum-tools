@@ -19,4 +19,4 @@
   </div>
 </div>
 
-<div *ngIf="votes.length > 1 && average" class="avg small">Average: {{average | number: '1.0-1'}}</div>
+<div *ngIf="votes.length > 1 && average && topic.endedAt" class="avg small">Average: {{average | number: '1.0-1'}}</div>

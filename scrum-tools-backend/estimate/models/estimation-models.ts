@@ -1,4 +1,4 @@
-import { Field, ID, Int, ObjectType } from '@nestjs/graphql';
+import { Field, ID, Float, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 export class EstimationMember {
@@ -29,7 +29,7 @@ export class TopicVote {
   @Field()
   votedAt: Date;
 
-  @Field(() => Int, { nullable: true })
+  @Field(() => Float, { nullable: true })
   vote?: number;
 }
 
@@ -47,7 +47,7 @@ export class EstimationTopic {
   @Field()
   description: string;
 
-  @Field(() => [Int])
+  @Field(() => [Float])
   options: number[];
 
   @Field()
@@ -83,7 +83,7 @@ export class EstimationSession {
   @Field()
   modifiedAt: Date;
 
-  @Field(() => [Int])
+  @Field(() => [Float])
   defaultOptions: number[];
 
   @Field(() => EstimationTopic, { nullable: true })

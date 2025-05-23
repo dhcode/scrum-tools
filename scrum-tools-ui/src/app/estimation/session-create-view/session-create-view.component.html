@@ -10,6 +10,13 @@
     <ng-template appFormErrorMsg="required" let-info>The session name is required</ng-template>
   </app-form-errors>
 
+  <label for="optionSet">Default Option set</label>
+  <select id="optionSet" formControlName="optionSet">
+    <option *ngFor="let opt of defaultOptionsSets" [ngValue]="opt">{{opt.name}}</option>
+  </select>
+
+
+
   <button [disabled]="form.invalid || loadingState.loading">Create session</button>
 
   <app-loading-spinner *ngIf="loadingState.loading"></app-loading-spinner>

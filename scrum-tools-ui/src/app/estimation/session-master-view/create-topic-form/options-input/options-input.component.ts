@@ -49,7 +49,7 @@ export class OptionsInputComponent implements OnInit, OnDestroy, ControlValueAcc
           if (v === '?') {
             return 0;
           }
-          return parseInt(v);
+          return parseFloat(parseFloat(v).toFixed(1));
         }),
       );
     });
@@ -127,11 +127,18 @@ export class OptionsInputComponent implements OnInit, OnDestroy, ControlValueAcc
 
   validateControl(control: AbstractControl): ValidationErrors | null {
     const value = control.value;
-    if (value !== '?' && (isNaN(value) || value === '' || value === '0' || value % 1 !== 0)) {
+    if (
+      value !== '?' &&
+      (isNaN(value) || value === '' || value === '0' || parseFloat(value) !== singleDecimal(value))
+    ) {
       return {
         invalidNumber: true,
       };
     }
     return null;
   }
+}
+
+function singleDecimal(v: string): number {
+  return parseFloat(parseFloat(v).toFixed(1));
 }

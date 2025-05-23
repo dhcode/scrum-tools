@@ -1,7 +1,7 @@
 # every time you change this file run: npm run generate
 
-mutation createSession($name: String!) {
-  createSession(name: $name, description: "") {
+mutation createSession($name: String!, $defaultOptions: [Float!]) {
+  createSession(name: $name, description: "", defaultOptions: $defaultOptions) {
     id
     joinSecret
     adminSecret
@@ -18,7 +18,7 @@ mutation joinSession($id: ID!, $joinSecret: String!, $name: String!) {
   }
 }
 
-mutation updateSession($id: ID!, $adminSecret: String!, $joinSecret: String, $name: String, $description: String, $defaultOptions: [Int!]) {
+mutation updateSession($id: ID!, $adminSecret: String!, $joinSecret: String, $name: String, $description: String, $defaultOptions: [Float!]) {
   updateSession(id: $id, adminSecret: $adminSecret, joinSecret: $joinSecret, name: $name, description: $description, defaultOptions: $defaultOptions) {
     id
     joinSecret
@@ -50,7 +50,7 @@ mutation createTopic($id: ID!, $adminSecret: String!, $name: String!, $descripti
   }
 }
 
-mutation addVote($id: ID!, $memberId: String!, $secret: String!, $vote: Int!) {
+mutation addVote($id: ID!, $memberId: String!, $secret: String!, $vote: Float!) {
   addVote(id: $id, memberId: $memberId, secret: $secret, vote: $vote) {
     memberId
     memberName

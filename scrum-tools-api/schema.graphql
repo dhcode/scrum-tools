@@ -19,7 +19,7 @@ type TopicVote {
   memberId: ID!
   memberName: String!
   votedAt: DateTime!
-  vote: Int
+  vote: Float
 }
 
 type EstimationTopic {
@@ -27,7 +27,7 @@ type EstimationTopic {
   sessionId: String!
   name: String!
   description: String!
-  options: [Int!]!
+  options: [Float!]!
   startedAt: DateTime!
   endedAt: DateTime
   votes: [TopicVote!]
@@ -41,7 +41,7 @@ type EstimationSession {
   adminSecret: String
   createdAt: DateTime!
   modifiedAt: DateTime!
-  defaultOptions: [Int!]!
+  defaultOptions: [Float!]!
   activeTopic: EstimationTopic
   topics(limit: Int! = 10): [EstimationTopic!]
   members: [EstimationMember!]
@@ -52,7 +52,7 @@ type Query {
 }
 
 type Mutation {
-  createSession(name: String!, description: String!, defaultOptions: [Int!]): EstimationSession!
+  createSession(name: String!, description: String!, defaultOptions: [Float!]): EstimationSession!
   updateSession(
     id: ID!
 
@@ -69,7 +69,7 @@ type Mutation {
     joinSecret: String
 
     """Provided to modify the default options"""
-    defaultOptions: [Int!]
+    defaultOptions: [Float!]
   ): EstimationSession!
   joinSession(
     id: ID!
@@ -83,7 +83,7 @@ type Mutation {
   removeMember(id: ID!, memberId: String!, adminSecret: String!): Boolean!
   createTopic(id: ID!, adminSecret: String!, name: String!, description: String): EstimationTopic!
   endVote(id: ID!, adminSecret: String!, topicId: String!): EstimationTopic!
-  addVote(id: ID!, memberId: String!, secret: String!, vote: Int!): TopicVote!
+  addVote(id: ID!, memberId: String!, secret: String!, vote: Float!): TopicVote!
 }
 
 type Subscription {

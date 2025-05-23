@@ -1,14 +1,14 @@
 import {
   ArrayNotEmpty,
   ArrayUnique,
-  IsInt,
   IsNotEmpty,
+  IsNumber,
   IsOptional,
   IsString,
   MaxLength,
   MinLength,
 } from 'class-validator';
-import { ArgsType, Field, ID, Int } from '@nestjs/graphql';
+import { ArgsType, Field, Float, ID } from '@nestjs/graphql';
 
 @ArgsType()
 export class CreateSessionArgs {
@@ -24,11 +24,11 @@ export class CreateSessionArgs {
   @MaxLength(4000)
   description: string;
 
-  @Field(() => [Int], { nullable: true })
+  @Field(() => [Float], { nullable: true })
   @IsOptional()
   @ArrayUnique()
   @ArrayNotEmpty()
-  @IsInt({ each: true })
+  @IsNumber({ allowNaN: false, allowInfinity: false }, { each: true })
   defaultOptions: number[];
 }
 
@@ -65,11 +65,11 @@ export class UpdateSessionArgs {
   @MaxLength(20)
   joinSecret?: string;
 
-  @Field(() => [Int], { nullable: true, description: 'Provided to modify the default options' })
+  @Field(() => [Float], { nullable: true, description: 'Provided to modify the default options' })
   @IsOptional()
   @ArrayUnique()
   @ArrayNotEmpty()
-  @IsInt({ each: true })
+  @IsNumber({ allowNaN: false, allowInfinity: false }, { each: true })
   defaultOptions?: number[];
 }
 
@@ -241,7 +241,7 @@ export class AddVoteArgs {
   @MaxLength(16)
   secret: string;
 
-  @Field(() => Int)
-  @IsInt()
+  @Field(() => Float)
+  @IsNumber({ allowNaN: false, allowInfinity: false })
   vote: number;
 }

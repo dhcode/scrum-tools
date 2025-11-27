@@ -8,6 +8,7 @@ import { SessionMemberFragment } from '../../../../generated/graphql';
 })
 export class MemberItemComponent implements OnInit {
   @Input() member: SessionMemberFragment;
+  @Input() hasVoted: boolean;
   @Input() isAdmin: boolean;
   @Input() isDetailed = false;
   @Output() isDetailedChange = new EventEmitter<boolean>();

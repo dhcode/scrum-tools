@@ -22,6 +22,10 @@ export class MembersComponent {
     return this.session.members.filter((m) => new Date(m.lastSeenAt).getTime() > now - 10000).length;
   }
 
+  hasVoted(member: SessionMemberFragment): boolean {
+    return this.session.activeTopic?.votes?.some((vote) => vote.memberId === member.id);
+  }
+
   byId(member: SessionMemberFragment) {
     return member.id;
   }

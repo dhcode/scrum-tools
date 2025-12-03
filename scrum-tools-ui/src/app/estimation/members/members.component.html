@@ -3,6 +3,7 @@
 <div *ngIf="session.members?.length" class="members">
   <app-member-item *ngFor="let member of session.members; trackBy: byId"
                    [member]="member"
+                   [hasVoted]="hasVoted(member)"
                    [isAdmin]="isAdmin"
                    [(isDetailed)]="isDetailed"
                    (remove)="remove.next(member)"></app-member-item>

@@ -1,7 +1,9 @@
 <div class="member">
   <div class="name" (click)="toggleEdit()">
-    <span class="status" [ngClass]="member.lastSeenAt | onlineStatus" [title]="member.lastSeenAt | date: 'medium'">⬤</span>
-    {{member.name}}
+    <span class="status" [ngClass]="member.lastSeenAt | onlineStatus" [title]="member.lastSeenAt | date: 'medium'">
+      {{ hasVoted ? '◉' : '◎' }}
+      </span>
+    {{ member.name }}
   </div>
 
   <ng-container *ngIf="isDetailed">

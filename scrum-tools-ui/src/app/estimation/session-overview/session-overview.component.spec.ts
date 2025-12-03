@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { SessionOverviewComponent } from './session-overview.component';
+import { GraphQLModule } from '../../graphql.module';
 
 describe('SessionOverviewComponent', () => {
   let component: SessionOverviewComponent;
@@ -8,6 +9,7 @@ describe('SessionOverviewComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
+      imports: [GraphQLModule],
       declarations: [SessionOverviewComponent],
     }).compileComponents();
   }));

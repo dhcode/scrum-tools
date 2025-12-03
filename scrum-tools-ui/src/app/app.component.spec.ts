@@ -26,6 +26,8 @@ describe('AppComponent', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement;
-    expect(compiled.querySelector('.content span').textContent).toContain('scrum-tools-ui app is running!');
+    expect(compiled.querySelector('.primary-note').innerText).toContain(
+      'You have not yet created or joined any session.',
+    );
   });
 });

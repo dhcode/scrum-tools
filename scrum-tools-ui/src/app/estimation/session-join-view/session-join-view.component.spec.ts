@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { SessionJoinViewComponent } from './session-join-view.component';
+import { GraphQLModule } from '@nestjs/graphql';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('SessionJoinViewComponent', () => {
   let component: SessionJoinViewComponent;
@@ -8,6 +10,7 @@ describe('SessionJoinViewComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
+      imports: [GraphQLModule, RouterTestingModule],
       declarations: [SessionJoinViewComponent],
     }).compileComponents();
   }));

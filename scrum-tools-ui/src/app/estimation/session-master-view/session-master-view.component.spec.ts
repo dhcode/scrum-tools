@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { SessionMasterViewComponent } from './session-master-view.component';
+import { GraphQLModule } from '../../graphql.module';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('SessionMasterViewComponent', () => {
   let component: SessionMasterViewComponent;
@@ -8,6 +10,7 @@ describe('SessionMasterViewComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
+      imports: [GraphQLModule, RouterTestingModule],
       declarations: [SessionMasterViewComponent],
     }).compileComponents();
   }));

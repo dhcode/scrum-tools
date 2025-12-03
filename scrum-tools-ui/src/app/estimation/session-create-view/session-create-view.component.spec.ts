@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { SessionCreateViewComponent } from './session-create-view.component';
+import { GraphQLModule } from '../../graphql.module';
 
 describe('SessionCreateViewComponent', () => {
   let component: SessionCreateViewComponent;
@@ -8,6 +9,7 @@ describe('SessionCreateViewComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
+      imports: [GraphQLModule],
       declarations: [SessionCreateViewComponent],
     }).compileComponents();
   }));

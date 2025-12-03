@@ -28,15 +28,17 @@
   </div>
   <app-topic-result *ngIf="currentTopic" [topic]="currentTopic"></app-topic-result>
 
+  <app-join-form *ngIf="!memberId" [session]="session" (joined)="initMember()"></app-join-form>
+
   <div class="members">
     <app-members [session]="session"></app-members>
 
   </div>
 
-  <app-join-form *ngIf="!memberId" [session]="session" (joined)="initMember()"></app-join-form>
+
 
   <p>
-    <button *ngIf="memberId" type="button" class="btn secondary" (click)="leaveSession()">Leave session</button>
+    <button *ngIf="memberId" type="button" class="btn secondary small" (click)="leaveSession()">Leave session</button>
     <a *ngIf="session.adminSecret" [routerLink]="['/','e','master', session.id]" class="master-link" target="scrumitMaster">Open master view</a>
   </p>
 
